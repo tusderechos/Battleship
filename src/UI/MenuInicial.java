@@ -11,14 +11,22 @@ package UI;
 
 import javax.swing.*;
 import java.awt.*;
+import ManejoCuentas.MemoriaCuentas;
 
 public class MenuInicial extends JFrame {
     
-    private JButton BtnIniciarSesion;
-    private JButton BtnCrearCuenta;
-    private JButton BtnSalir;
+    private final JButton BtnIniciarSesion;
+    private final JButton BtnCrearCuenta;
+    private final JButton BtnSalir;
+    private final MemoriaCuentas Memoria;
     
     public MenuInicial() {
+        this(new MemoriaCuentas(60));
+    }
+    
+    public MenuInicial(MemoriaCuentas Memoria) {
+        this.Memoria = Memoria;
+        
         ImageIcon IconoFondo = new ImageIcon(getClass().getResource("/images/bg_inicial.PNG"));
         Image ImagenFondo = IconoFondo.getImage();
         
@@ -43,17 +51,17 @@ public class MenuInicial extends JFrame {
         
         BtnIniciarSesion = new JButton("INICIAR SESION");
         BtnIniciarSesion.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-//        BtnIniciarSesion.addActionListener(e -> AbrirIniciarSesion());
+        BtnIniciarSesion.addActionListener(e -> AbrirIniciarSesion());
         BtnIniciarSesion.setBounds(330, 460, 150, 30);
         
         BtnCrearCuenta = new JButton("CREAR CUENTA");
         BtnCrearCuenta.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-//        BtnCrearCuenta.addActionListener(e -> AbrirCrearCuenta());
+        BtnCrearCuenta.addActionListener(e -> AbrirCrearCuenta());
         BtnCrearCuenta.setBounds(330, 460, 150, 30);
         
         BtnSalir = new JButton("SALIR");
         BtnSalir.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-//        BtnSalir.addActionListener(e -> onSalir());
+        BtnSalir.addActionListener(e -> onSalir());
         BtnSalir.setBounds(330, 460, 150, 30);
         
         PanelBotones.add(Box.createVerticalStrut(10));
@@ -67,5 +75,32 @@ public class MenuInicial extends JFrame {
         PanelFondo.setLayout(new BorderLayout());
         PanelFondo.add(PanelBotones, BorderLayout.SOUTH);
         PanelFondo.repaint();
+    }
+    
+    private void AbrirIniciarSesion() {
+        IniciarSesion iniciarSesion = new IniciarSesion(this, Memoria, true);
+        iniciarSesion.setVisible(true);
+    }
+    
+    private void AbrirCrearCuenta() {
+        CrearCuenta crearCuenta = new CrearCuenta(this, Memoria, true);
+        crearCuenta.setVisible(true);
+    }
+    
+    public void onLoginExitoso(String usuario) {
+        if (usuario == null || usuario.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Usuario Invalido", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        dispose();
+    }
+    
+    private void onSalir() {
+        int Opcion = JOptionPane.showConfirmDialog(this, "Estas seguro que quieres salir?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+        
+        if (Opcion == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
     }
 }
