@@ -19,7 +19,6 @@ import java.awt.event.MouseEvent;
 public class MenuPrincipal extends JFrame {
     
     private JLabel LblTitulo;
-    private JLabel LblSubtitulo;
     
     private JButton BtnJugar;
     private JButton BtnConfiguracion;
@@ -70,25 +69,9 @@ public class MenuPrincipal extends JFrame {
         LblTitulo = new JLabel("BATTLESHIP");
         EstilizarTitulo(LblTitulo);
         
-        LblSubtitulo = new JLabel("Castlevania: Lord of Shadows");
-        EstilizarLabel(LblSubtitulo);
-        
-        int ancho = Math.max(LblTitulo.getPreferredSize().width, LblSubtitulo.getPreferredSize().width);
-        
-        Dimension tamanotitulo = new Dimension(ancho, LblTitulo.getPreferredSize().height);
-        Dimension tamanosubtitulo = new Dimension(ancho, LblSubtitulo.getPreferredSize().height);
-        
-        LblTitulo.setPreferredSize(tamanotitulo);
-        LblTitulo.setMaximumSize(tamanotitulo);
-        
-        LblSubtitulo.setPreferredSize(tamanosubtitulo);
-        LblSubtitulo.setMaximumSize(tamanosubtitulo);
-        
         PanelHeader.add(Box.createVerticalStrut(10));
         PanelHeader.add(LblTitulo);
-        PanelHeader.add(LblSubtitulo);
         PanelHeader.add(Box.createVerticalGlue());
-        
         
         JPanel PanelBotones = new JPanel();
         PanelBotones.setLayout(new BoxLayout(PanelBotones, BoxLayout.Y_AXIS));
