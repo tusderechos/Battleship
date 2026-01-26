@@ -94,6 +94,7 @@ public class MenuInicial extends JFrame {
         }
         
         dispose();
+        new MenuPrincipal(Memoria, usuario).setVisible(true);
     }
     
     private void onSalir() {
