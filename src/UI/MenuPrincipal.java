@@ -211,7 +211,8 @@ public class MenuPrincipal extends JFrame {
             return;
         }
         
-//        new Configuracion(Memoria, UsuarioActivo, this).setVisible(true);
+        new Configuracion(Memoria, UsuarioActivo, this).setVisible(true);
+        this.dispose();
     }
     private void AbrirMiCuenta() {
         if (UsuarioActivo == null || UsuarioActivo.isBlank()) {
@@ -220,6 +221,7 @@ public class MenuPrincipal extends JFrame {
         }
         
 //        new MiCuenta(Memoria, UsuarioActivo, this).setVisible(true);
+//        this.dispose();
     }
     
     private void AbrirReportes() {
@@ -228,7 +230,8 @@ public class MenuPrincipal extends JFrame {
             return;
         }
         
-//        new Reportes(Memoria, UsuarioActivo, this).setVisible(true);
+        new Reportes(Memoria, UsuarioActivo, this).setVisible(true);
+        this.dispose();
     }
     
     private void onLogout() {

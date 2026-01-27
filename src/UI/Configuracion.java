@@ -19,8 +19,6 @@ public class Configuracion extends JFrame {
     private final JButton BtnModoJuego;
     private final JButton BtnVolver;
     
-    private final JLabel LblUsuario;
-    
     private final String UsuarioActivo;
     
     private MemoriaCuentas Memoria;
@@ -64,7 +62,7 @@ public class Configuracion extends JFrame {
         
         BtnVolver = new JButton("VOLVER  ");
         BtnVolver.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        BtnVolver.addActionListener(e -> OnVolver());
+        BtnVolver.addActionListener(e -> OnVolver());
         
         PanelBotones.add(Box.createVerticalStrut(70));
         PanelBotones.add(BtnDificultad);
@@ -74,16 +72,11 @@ public class Configuracion extends JFrame {
         PanelBotones.add(BtnVolver);
         PanelBotones.add(Box.createVerticalGlue());
         
-        JPanel PanelUsuario = new JPanel();
-        PanelUsuario.setOpaque(true);
-        PanelUsuario.setBackground(new Color(0, 0, 0, 160));
-        
-        LblUsuario = new JLabel("Usuario: " + this.UsuarioActivo);
-        LblUsuario.setForeground(Color.WHITE);
-        LblUsuario.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        LblUsuario.setFont(new Font("Bookman Old Style", Font.PLAIN, 16));
-        LblUsuario.setBorder(BorderFactory.createEmptyBorder(0, 12, 8, 0));
-        
-        PanelUsuario.add(LblUsuario, BorderLayout.WEST);
+        PanelFondo.add(PanelBotones, BorderLayout.CENTER);
+    }
+    
+    private void OnVolver() {
+        this.dispose();
+        menuPrincipal.setVisible(true);
     }
 }
