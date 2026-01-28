@@ -189,18 +189,30 @@ public class MemoriaCuentas implements Datos {
         if (indice == -1)
             return;
         
-        Jugadores[indice].setPuntos(suma);
+        int actuales = Jugadores[indice].getPuntos();
+        Jugadores[indice].setPuntos(actuales + suma);
     }
-//    
-//    public int ContarActivos(int indice) {
-//        if (indice >= Registrados) {
-//            return 0;
-//        }
-//        
-//        int suma = Activo[indice] ? 1 : 0;
-//        
-//        return suma + ContarActivos(indice + 1);
-//    }
+    
+    public Calendar getFechaIngreso(int indice) {
+        if (indice < 0 || indice >= Registrados) {
+            return null;
+        }
+        
+        return Jugadores[indice].getFechaIngreso();
+    }
+    
+    public String getFechaIngresoFormat(int indice, String patron) {
+        Calendar calendario = getFechaIngreso(indice);
+        if (calendario == null) {
+            return "";
+        }
+        
+        String formato = (patron == null || patron.isEmpty()) ? "dd/MM/yyyy HH:mm" : patron;
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(formato);
+        
+        return sdf.format(calendario.getTime());
+    }
     
     public Player getPlayer(int indice) {
         if (indice < 0 || indice >= Registrados)
