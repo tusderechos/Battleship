@@ -12,6 +12,8 @@ package UI;
 import javax.swing.*;
 import java.awt.*;
 import ManejoCuentas.MemoriaCuentas;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MenuInicial extends JFrame {
     
@@ -53,16 +55,19 @@ public class MenuInicial extends JFrame {
         BtnIniciarSesion.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         BtnIniciarSesion.addActionListener(e -> AbrirIniciarSesion());
         BtnIniciarSesion.setBounds(330, 460, 150, 30);
+        EstilizarBoton(BtnIniciarSesion);
         
         BtnCrearCuenta = new JButton("CREAR CUENTA");
         BtnCrearCuenta.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         BtnCrearCuenta.addActionListener(e -> AbrirCrearCuenta());
         BtnCrearCuenta.setBounds(330, 460, 150, 30);
+        EstilizarBoton(BtnCrearCuenta);
         
         BtnSalir = new JButton("SALIR");
         BtnSalir.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         BtnSalir.addActionListener(e -> onSalir());
         BtnSalir.setBounds(330, 460, 150, 30);
+        EstilizarBoton(BtnSalir);
         
         PanelBotones.add(Box.createVerticalStrut(10));
         PanelBotones.add(BtnIniciarSesion);
@@ -103,5 +108,30 @@ public class MenuInicial extends JFrame {
         if (Opcion == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
+    }
+    
+    private void EstilizarBoton(JButton boton) {
+        boton.setFont(new Font("DIN Condensed", Font.BOLD, 18));
+        boton.setBackground(new Color(25, 25, 25)); //Gris oscuro tipo metal
+        boton.setForeground(new Color(220, 180, 120)); //Dorado suave
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 2), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        boton.setOpaque(true);
+        boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        boton.setPreferredSize(new Dimension(220, 44));
+        
+            boton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                boton.setBackground(new Color(0, 0, 60));
+                boton.setForeground(new Color(255, 220, 130));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                boton.setBackground(new Color(25, 25, 25));
+                boton.setForeground(new Color(220, 180, 80));
+            }
+        });
     }
 }

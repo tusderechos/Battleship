@@ -103,22 +103,27 @@ public class MenuPrincipal extends JFrame {
         BtnJugar = new JButton("JUGAR BATTLESHIP");
         BtnJugar.setAlignmentX(Component.CENTER_ALIGNMENT);
         BtnJugar.addActionListener(e -> onJugar());
+        EstilizarBoton(BtnJugar);
 
         BtnConfiguracion = new JButton("CONFIGURACION");
         BtnConfiguracion.setAlignmentX(Component.CENTER_ALIGNMENT);
         BtnConfiguracion.addActionListener(e -> AbrirConfiguracion());
-
+        EstilizarBoton(BtnConfiguracion);
+        
         BtnMiPerfil = new JButton("MI PERFIL");
         BtnMiPerfil.setAlignmentX(Component.CENTER_ALIGNMENT);
         BtnMiPerfil.addActionListener(e -> AbrirMiCuenta());
+        EstilizarBoton(BtnMiPerfil);
 
         BtnReportes = new JButton("REPORTES");
         BtnReportes.setAlignmentX(Component.CENTER_ALIGNMENT);
         BtnReportes.addActionListener(e -> AbrirReportes());
+        EstilizarBoton(BtnReportes);
 
         BtnLogout = new JButton("LOG OUT");
         BtnLogout.setAlignmentX(Component.CENTER_ALIGNMENT);
         BtnLogout.addActionListener(e -> onLogout());
+        EstilizarBoton(BtnLogout);
         
         PanelBotones.add(Box.createVerticalStrut(70));
         PanelBotones.add(BtnJugar);
@@ -280,7 +285,7 @@ public class MenuPrincipal extends JFrame {
     }
     
     private void EstilizarBoton(JButton boton) {
-        boton.setFont(new Font("Bookman Old Style", Font.BOLD, 18));
+        boton.setFont(new Font("DIN Condensed", Font.BOLD, 18));
         boton.setBackground(new Color(25, 25, 25)); //Gris oscuro tipo metal
         boton.setForeground(new Color(220, 180, 120)); //Dorado suave
         boton.setFocusPainted(false);
@@ -289,11 +294,10 @@ public class MenuPrincipal extends JFrame {
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.setPreferredSize(new Dimension(220, 44));
         
-        //Mi querido, hermoso y celestial efecto hover
         boton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                boton.setBackground(new Color(60, 0, 0));
+                boton.setBackground(new Color(0, 0, 60));
                 boton.setForeground(new Color(255, 220, 130));
             }
             

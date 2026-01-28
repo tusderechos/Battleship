@@ -419,7 +419,7 @@ public class Reportes extends JFrame {
         boton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                boton.setBackground(new Color(60, 0, 0));
+                boton.setBackground(new Color(0, 0, 60));
                 boton.setForeground(new Color(255, 220, 130));
             }
             

@@ -62,6 +62,10 @@ public class MiPerfil extends JFrame {
         setLocationRelativeTo(menuPrincipal);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(160, 0, 0, 0));
+        
         BtnVerDatos = new JButton("VER MIS DATOS");
         BtnVerDatos.addActionListener(e -> VerMisDatos());
 
@@ -112,7 +116,7 @@ public class MiPerfil extends JFrame {
         EstilizarLabel(LblActivo);
         LblActivo.setFont(new Font("Bookman Old Style", Font.BOLD, 24));
 
-        PanelInfo.add(Box.createVerticalStrut(15));
+        PanelInfo.add(Box.createVerticalStrut(10));
         PanelInfo.add(LblUsuario);
         PanelInfo.add(Box.createVerticalStrut(10));
         PanelInfo.add(LblPuntos);
@@ -124,10 +128,9 @@ public class MiPerfil extends JFrame {
         PanelInfoWrapper.add(PanelInfo);
                  
         PanelFondo.setLayout(new BorderLayout());
+        PanelFondo.add(panel, BorderLayout.NORTH);
         PanelFondo.add(PanelInfoWrapper, BorderLayout.CENTER);
         PanelFondo.add(PanelBotones, BorderLayout.SOUTH);
-        
-        VerMisDatos();
         
         getRootPane().setDefaultButton(BtnVerDatos);
         PanelFondo.repaint();
@@ -269,7 +272,7 @@ public class MiPerfil extends JFrame {
     
     private void EstilizarBoton(JButton boton) {
         boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        boton.setFont(new Font("Bookman Old Style", Font.BOLD, 18));
+        boton.setFont(new Font("DIN Condensed", Font.BOLD, 18));
         boton.setBackground(new Color(25, 25, 25)); //Gris oscuro tipo metal
         boton.setForeground(new Color(220, 180, 120)); //Dorado suave
         boton.setFocusPainted(false);
@@ -278,11 +281,10 @@ public class MiPerfil extends JFrame {
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.setPreferredSize(new Dimension(220, 44));
         
-        //Mi querido, hermoso y celestial efecto hover
         boton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                boton.setBackground(new Color(60, 0, 0));
+                boton.setBackground(new Color(0, 0, 60));
                 boton.setForeground(new Color(255, 220, 130));
             }
             
