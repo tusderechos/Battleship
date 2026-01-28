@@ -66,7 +66,29 @@ public class MenuPrincipal extends JFrame {
         PanelHeader.setLayout(new BoxLayout(PanelHeader, BoxLayout.Y_AXIS));
         PanelHeader.setOpaque(false);
         
-        LblTitulo = new JLabel("BATTLESHIP");
+        LblTitulo = new JLabel("BATTLESHIP") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                FontMetrics fm = g2d.getFontMetrics();
+                int x = (getWidth() - fm.stringWidth(getText())) / 2;
+                int y = (getHeight() + fm.getAscent()) / 2 - 6;
+                
+                //Sombra (solo es el mismo texto dibujado varias veces alrededor del texto original)
+                g2d.setColor(new Color(0, 0, 0, 160));
+                g2d.drawString(getText(), x - 3, y);
+                g2d.drawString(getText(), x + 3, y);
+                g2d.drawString(getText(), x, y - 3);
+                g2d.drawString(getText(), x, y + 3);
+                
+                //Texto principal
+                g2d.setColor(getForeground());
+                g2d.drawString(getText(), x, y);
+            }
+        };
+        
         EstilizarTitulo(LblTitulo);
         
         PanelHeader.add(Box.createVerticalStrut(10));
@@ -220,8 +242,8 @@ public class MenuPrincipal extends JFrame {
             return;
         }
         
-//        new MiCuenta(Memoria, UsuarioActivo, this).setVisible(true);
-//        this.dispose();
+        new MiPerfil(Memoria, UsuarioActivo, this).setVisible(true);
+        this.dispose();
     }
     
     private void AbrirReportes() {
@@ -285,14 +307,9 @@ public class MenuPrincipal extends JFrame {
     
     private void EstilizarTitulo(JLabel titulo) {
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        Font base = new Font("Old English Text MT", Font.BOLD, 38);
-        titulo.setFont(base);
-        
-        titulo.setForeground(new Color(230, 200, 120));
-        titulo.setOpaque(true);
-        titulo.setBackground(new Color(0, 0, 0, 170)); //Franja oscura
-        titulo.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
+        titulo.setFont(new Font("ITC Machine Std", Font.BOLD, 85));
+        titulo.setForeground(Color.WHITE);
+        titulo.setOpaque(false);
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
     
