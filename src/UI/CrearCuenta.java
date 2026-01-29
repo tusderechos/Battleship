@@ -14,6 +14,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.border.Border;
+import javax.swing.text.JTextComponent;
 
 public class CrearCuenta extends JDialog {
     
@@ -48,7 +50,7 @@ public class CrearCuenta extends JDialog {
             }
         };
         
-        setTitle("Vampire Wargame - Crear Cuenta");
+        setTitle("BATTLESHIP - Crear Cuenta");
         setContentPane(PanelFondo);
         setSize(700, 700);
         setResizable(false);
@@ -61,25 +63,35 @@ public class CrearCuenta extends JDialog {
         
         LblUsuario = new JLabel("Usuario");
         LblUsuario.setForeground(Color.WHITE);
+        EstilizarLabel(LblUsuario);
         TxtUsuario = new JTextField("");
         TxtUsuario.setMaximumSize(new Dimension(250, 45));
+        EstilizarCampoTexto(TxtUsuario);
         
         LblContra = new JLabel("Contraseña");
         LblContra.setForeground(Color.WHITE);
+        EstilizarLabel(LblContra);
         PassContrasena = new JPasswordField("");
         PassContrasena.setMaximumSize(new Dimension(250, 45));
+        EstilizarCampoTexto(PassContrasena);
         
         LblConfirmarContra = new JLabel("Confirmar Contraseña");
         LblConfirmarContra.setForeground(Color.WHITE);
+        EstilizarLabel(LblConfirmarContra);
         PassConfirmarContra = new JPasswordField("");
         PassConfirmarContra.setMaximumSize(new Dimension(250, 45));
+        EstilizarCampoTexto(PassConfirmarContra);
         
+        PanelInfo.add(Box.createVerticalStrut(30));
         PanelInfo.add(LblUsuario);
         PanelInfo.add(TxtUsuario);
         PanelInfo.add(LblContra);
         PanelInfo.add(PassContrasena);
         PanelInfo.add(LblConfirmarContra);
         PanelInfo.add(PassConfirmarContra);
+        PanelInfo.add(Box.createVerticalGlue());
+
+        
         
         
         JPanel PanelBotones = new JPanel();
@@ -240,5 +252,37 @@ public class CrearCuenta extends JDialog {
                 boton.setForeground(new Color(220, 180, 80));
             }
         });
+    }
+    
+    private void EstilizarCampoTexto(JTextComponent campo) {
+        campo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
+        campo.setBackground(new Color(25, 25, 25));
+        campo.setForeground(Color.WHITE);
+        campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(0, 0, 120), 2), BorderFactory.createEmptyBorder(5, 20, 5, 20)));
+        campo.setOpaque(true);
+        campo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        campo.setPreferredSize(new Dimension(220, 44));
+        
+        campo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                campo.setBackground(new Color(60, 0, 0));
+                campo.setForeground(new Color(255, 220, 130));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                campo.setBackground(new Color(25, 25, 25));
+                campo.setForeground(Color.WHITE);
+            }
+        });
+    }
+    
+    private void EstilizarLabel(JLabel label) {
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setFont(new Font("DIN Condensed", Font.BOLD, 22));
+        label.setForeground(Color.WHITE);
+        label.setBackground(new Color(0, 0, 0));
+        label.setOpaque(false);
     }
 }

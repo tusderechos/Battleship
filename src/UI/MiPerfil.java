@@ -20,14 +20,14 @@ import java.awt.event.MouseEvent;
 
 public class MiPerfil extends JFrame {
     
-    public JButton BtnVerDatos;
-    public JButton BtnModificarDatos;
-    public JButton BtnVolver;
+    private JButton BtnVerDatos;
+    private JButton BtnModificarDatos;
+    private JButton BtnVolver;
     
-    public JLabel LblUsuario;
-    public JLabel LblPuntos;
-    public JLabel LblFechaIngreso;
-    public JLabel LblActivo;
+    private JLabel LblUsuario;
+    private JLabel LblPuntos;
+    private JLabel LblFechaIngreso;
+    private JLabel LblActivo;
     
     private String UsuarioActivo;
     private final MenuPrincipal menuPrincipal;
@@ -100,21 +100,26 @@ public class MiPerfil extends JFrame {
         PanelInfo.setBackground(new Color(0, 0, 0, 130));
         PanelInfo.setOpaque(true);
         
-        LblUsuario = new JLabel("Nombre de Usuario: ");
+//        LblUsuario = new JLabel("Nombre de Usuario: ");
+        LblUsuario = new JLabel("");
         EstilizarLabel(LblUsuario);
-        LblUsuario.setFont(new Font("Bookman Old Style", Font.BOLD, 24));
         
-        LblPuntos = new JLabel("Puntaje: ");
+        LblPuntos = new JLabel("");
+//        LblPuntos = new JLabel("Puntaje: ");
         EstilizarLabel(LblPuntos);
-        LblPuntos.setFont(new Font("Bookman Old Style", Font.BOLD, 24));
         
-        LblFechaIngreso = new JLabel("Fecha de ingreso: ");
+        LblFechaIngreso = new JLabel("");
+//        LblFechaIngreso = new JLabel("Fecha de ingreso: ");
         EstilizarLabel(LblFechaIngreso);
-        LblFechaIngreso.setFont(new Font("Bookman Old Style", Font.BOLD, 24));
         
-        LblActivo = new JLabel("Estado: ");
+        LblActivo = new JLabel("");
+//        LblActivo = new JLabel("Estado: ");
         EstilizarLabel(LblActivo);
-        LblActivo.setFont(new Font("Bookman Old Style", Font.BOLD, 24));
+        
+        /*
+            Lo que tiene que ver con mostrar los datos del usuario solamente es un tipo de placeholder
+            hasta que lo arregle (posiblemente hoy o manana), asi que nadie se vaya a asustar
+        */
 
         PanelInfo.add(Box.createVerticalStrut(10));
         PanelInfo.add(LblUsuario);
@@ -311,7 +316,7 @@ public class MiPerfil extends JFrame {
     
     private void EstilizarLabel(JLabel label) {
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setFont(new Font("Old English Text MT", Font.BOLD, 22));
+        label.setFont(new Font("DIN Condensed", Font.BOLD, 22));
         label.setForeground(new Color(230, 230, 150));
         label.setBackground(new Color(0, 0, 0, 150));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
