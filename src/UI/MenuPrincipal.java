@@ -11,10 +11,15 @@ package UI;
  */
 
 import ManejoCuentas.MemoriaCuentas;
+import enums.Dificultad;
+import enums.ModoJuego;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MenuPrincipal extends JFrame {
     
@@ -31,6 +36,8 @@ public class MenuPrincipal extends JFrame {
     
     private final MemoriaCuentas Memoria;
     
+    private Dificultad DificultadActual = Dificultad.NORMAL;
+    private ModoJuego ModoJuegoActual = ModoJuego.TUTORIAL;
 
     public MenuPrincipal(MemoriaCuentas Memoria, String UsuarioActivo) {
         this.Memoria = Memoria;
@@ -183,53 +190,53 @@ public class MenuPrincipal extends JFrame {
             JOptionPane.showMessageDialog(this, "No hay oponentes conectados actualmente", "Sin Rivales", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        //Arreglo con rivales
-        String[] rivales = new String[cuenta];
-        int k = 0;
-        
-        for (int i = 0; i < activos.length; i++) {
-            if (activos[i] != null && !activos[i].equalsIgnoreCase(UsuarioActivo)) {
-                rivales[k++] = activos[i];
-            }
-        }
-        
-        JLabel LblBlancas = new JLabel("BLANCAS: " + UsuarioActivo);
-        
-        JComboBox<String> CmbNegras = new JComboBox<>(rivales);
-        
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(0, 1, 6, 6));
-        
-        panel.add(new JLabel("Jugador BLANCAS: "));
-        panel.add(LblBlancas);
-        panel.add(new JLabel("Jugador (Elige oponente): "));
-        panel.add(CmbNegras);
-        
-        int eleccion = JOptionPane.showConfirmDialog(this, panel, "Elegir Oponente", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-        
-        if (eleccion != JOptionPane.OK_OPTION) {
-            return;
-        }
-        
-        String negras = (String) CmbNegras.getSelectedItem();
-        
-        if (negras == null || negras.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Debes seleccionar un oponente!", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-//        PanelJuego juego = new PanelJuego(Memoria, UsuarioActivo, negras, this);
-//        this.setVisible(false);
-        
-//        juego.addWindowListener(new WindowAdapter() {
-//            @Override
-//            public void windowClosing(WindowEvent e) {
-//                MenuPrincipal.this.setVisible(true);
-//            }
-//        });
 //        
-//        juego.setVisible(true);
+//        //Arreglo con rivales
+//        String[] rivales = new String[cuenta];
+//        int k = 0;
+//        
+//        for (int i = 0; i < activos.length; i++) {
+//            if (activos[i] != null && !activos[i].equalsIgnoreCase(UsuarioActivo)) {
+//                rivales[k++] = activos[i];
+//            }
+//        }
+//        
+//        JLabel LblBlancas = new JLabel("BLANCAS: " + UsuarioActivo);
+//        
+//        JComboBox<String> CmbNegras = new JComboBox<>(rivales);
+//        
+//        JPanel panel = new JPanel();
+//        panel.setLayout(new GridLayout(0, 1, 6, 6));
+//        
+//        panel.add(new JLabel("Jugador BLANCAS: "));
+//        panel.add(LblBlancas);
+//        panel.add(new JLabel("Jugador (Elige oponente): "));
+//        panel.add(CmbNegras);
+//        
+//        int eleccion = JOptionPane.showConfirmDialog(this, panel, "Elegir Oponente", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+//        
+//        if (eleccion != JOptionPane.OK_OPTION) {
+//            return;
+//        }
+//        
+//        String negras = (String) CmbNegras.getSelectedItem();
+//        
+//        if (negras == null || negras.isBlank()) {
+//            JOptionPane.showMessageDialog(this, "Debes seleccionar un oponente!", "Aviso", JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
+//        
+        PanelJuego juego = new PanelJuego(Memoria, UsuarioActivo, this, getDificultadActual(), getModoJuegoActual());
+        this.setVisible(false);
+        
+        juego.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                MenuPrincipal.this.setVisible(true);
+            }
+        });
+        
+        juego.setVisible(true);
     }
     
     private void AbrirConfiguracion() {
@@ -326,5 +333,21 @@ public class MenuPrincipal extends JFrame {
         label.setOpaque(true);
         label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
+    }
+
+    public void setDificultadActual(Dificultad DificultadActual) {
+        this.DificultadActual = DificultadActual;
+    }
+
+    public void setModoJuegoActual(ModoJuego ModoJuegoActual) {
+        this.ModoJuegoActual = ModoJuegoActual;
+    }
+
+    public Dificultad getDificultadActual() {
+        return DificultadActual;
+    }
+
+    public ModoJuego getModoJuegoActual() {
+        return ModoJuegoActual;
     }
 }

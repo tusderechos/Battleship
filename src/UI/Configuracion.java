@@ -90,12 +90,14 @@ public class Configuracion extends JFrame {
         DialogDificultad diadiff = new DialogDificultad(this, dificultad);
         diadiff.setVisible(true);
         dificultad = diadiff.getSeleccion();
+        menuPrincipal.setDificultadActual(dificultad);
     }
     
     private void MostrarModoJuego() {
         DialogModoJuego diamodo = new DialogModoJuego(this, modoJuego);
         diamodo.setVisible(true);
         modoJuego = diamodo.getSeleccion();
+        menuPrincipal.setModoJuegoActual(modoJuego);
     }
     
     private void OnVolver() {

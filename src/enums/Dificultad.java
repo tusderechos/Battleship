@@ -10,9 +10,9 @@ package enums;
  */
 public enum Dificultad {
     EASY(5, "EASY (5 barcos)"),
-    NORMAL(5, "NORMAL (4 barcos)"),
-    EXPERT(5, "EXPERT (2 barcos)"),
-    GENIUS(5, "GENIUS (1 barco)");
+    NORMAL(4, "NORMAL (4 barcos)"),
+    EXPERT(2, "EXPERT (2 barcos)"),
+    GENIUS(1, "GENIUS (1 barco)");
     
     private final int barcos;
     private final String etiqueta;
