@@ -14,6 +14,7 @@ import javax.swing.*;
 import ManejoCuentas.MemoriaCuentas;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.text.JTextComponent;
 
 public class IniciarSesion extends JDialog {
     
@@ -43,7 +44,7 @@ public class IniciarSesion extends JDialog {
             }
         };
         
-        setTitle("Vampire Wargame - Iniciar Sesion");
+        setTitle("BATTLESHIP - Iniciar Sesion");
         setContentPane(PanelFondo);
         setSize(700, 700);
         setResizable(false);
@@ -56,13 +57,17 @@ public class IniciarSesion extends JDialog {
         
         LblUsuario = new JLabel("Usuario");
         LblUsuario.setForeground(Color.WHITE);
+        EstilizarLabel(LblUsuario);
         TxtUsuario = new JTextField("");
         TxtUsuario.setMaximumSize(new Dimension(250, 45));
+        EstilizarCampoTexto(TxtUsuario);
         
         LblContra = new JLabel("Contraseña");
         LblContra.setForeground(Color.WHITE);
+        EstilizarLabel(LblContra);
         PassContra = new JPasswordField("");
         PassContra.setMaximumSize(new Dimension(250, 45));
+        EstilizarCampoTexto(PassContra);
         
         PanelInfo.add(LblUsuario);
         PanelInfo.add(TxtUsuario);
@@ -193,6 +198,39 @@ public class IniciarSesion extends JDialog {
             public void mouseExited(MouseEvent e) {
                 boton.setBackground(new Color(25, 25, 25));
                 boton.setForeground(new Color(220, 180, 80));
+            }
+        });
+    }
+    
+    private void EstilizarLabel(JLabel label) {
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setFont(new Font("DIN Condensed", Font.BOLD, 22));
+        label.setForeground(Color.WHITE);
+        label.setBackground(new Color(0, 0, 0, 180));
+        label.setOpaque(true);
+        label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
+    }
+    
+    private void EstilizarCampoTexto(JTextComponent campo) {
+        campo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
+        campo.setBackground(new Color(25, 25, 25));
+        campo.setForeground(Color.WHITE);
+        campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(0, 0, 120), 2), BorderFactory.createEmptyBorder(5, 20, 5, 20)));
+        campo.setOpaque(true);
+        campo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        campo.setPreferredSize(new Dimension(220, 44));
+        
+        campo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                campo.setBackground(new Color(60, 0, 0));
+                campo.setForeground(new Color(255, 220, 130));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                campo.setBackground(new Color(25, 25, 25));
+                campo.setForeground(Color.WHITE);
             }
         });
     }

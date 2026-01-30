@@ -14,22 +14,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.border.Border;
 import javax.swing.text.JTextComponent;
 
 public class CrearCuenta extends JDialog {
     
-    private JLabel LblUsuario;
-    private JTextField TxtUsuario;
+    private final JLabel LblUsuario;
+    private final JTextField TxtUsuario;
     
-    private JLabel LblContra;
-    private JPasswordField PassContrasena;
+    private final JLabel LblContra;
+    private final JPasswordField PassContrasena;
     
-    private JLabel LblConfirmarContra;
-    private JPasswordField PassConfirmarContra;
+    private final JLabel LblConfirmarContra;
+    private final JPasswordField PassConfirmarContra;
     
-    private JButton BtnCrear;
-    private JButton BtnCancelar;
+    private final JButton BtnCrear;
+    private final JButton BtnCancelar;
     
     private final MemoriaCuentas Memoria;
     private final MenuInicial menuInicial;
@@ -90,9 +89,6 @@ public class CrearCuenta extends JDialog {
         PanelInfo.add(LblConfirmarContra);
         PanelInfo.add(PassConfirmarContra);
         PanelInfo.add(Box.createVerticalGlue());
-
-        
-        
         
         JPanel PanelBotones = new JPanel();
         PanelBotones.setLayout(new BoxLayout(PanelBotones, BoxLayout.X_AXIS));
@@ -282,7 +278,8 @@ public class CrearCuenta extends JDialog {
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
         label.setFont(new Font("DIN Condensed", Font.BOLD, 22));
         label.setForeground(Color.WHITE);
-        label.setBackground(new Color(0, 0, 0));
-        label.setOpaque(false);
+        label.setBackground(new Color(0, 0, 0, 180));
+        label.setOpaque(true);
+        label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
     }
 }

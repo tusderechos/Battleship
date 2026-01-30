@@ -26,6 +26,18 @@ public class DialogDificultad extends JDialog {
         super(padre, "Dificultad", true);
         this.Seleccion = actual;
         
+        ImageIcon IconoFondo = new ImageIcon(getClass().getResource("/images/bg_dificultad.PNG"));
+        Image ImagenFondo = IconoFondo.getImage();
+        
+        JPanel PanelFondo = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(ImagenFondo, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        
+        
         setSize(420, 320);
         setLocationRelativeTo(padre);
         setResizable(false);
@@ -33,14 +45,9 @@ public class DialogDificultad extends JDialog {
         JPanel raiz = new JPanel();
         raiz.setLayout(new BorderLayout());
         raiz.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        raiz.setBackground(new Color(0, 0, 0, 180));
-        setContentPane(raiz);
-        
-        JLabel lbltitulo = new JLabel("SELECCIONA LA DIFICULTAD", SwingConstants.CENTER);
-        lbltitulo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
-        lbltitulo.setForeground(new Color(220, 180, 120));
-        
-        raiz.add(lbltitulo, BorderLayout.NORTH);
+        raiz.setOpaque(false);
+
+        setContentPane(PanelFondo);
         
         JPanel PanelOpciones = new JPanel();
         PanelOpciones.setOpaque(false);
@@ -49,15 +56,23 @@ public class DialogDificultad extends JDialog {
         ButtonGroup bg = new ButtonGroup();
         
         JRadioButton RBEasy = CrearRadio(Dificultad.EASY, actual);
-        JRadioButton RBNormal = CrearRadio(Dificultad.NORMAL, actual);
-        JRadioButton RBExpert = CrearRadio(Dificultad.EXPERT, actual);
-        JRadioButton RBGenius = CrearRadio(Dificultad.GENIUS, actual);
+        RBEasy.setFont(new Font("DIN Condensed", Font.BOLD, 16));
         
+        JRadioButton RBNormal = CrearRadio(Dificultad.NORMAL, actual);
+        RBNormal.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+
+        JRadioButton RBExpert = CrearRadio(Dificultad.EXPERT, actual);
+        RBExpert.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+
+        JRadioButton RBGenius = CrearRadio(Dificultad.GENIUS, actual);
+        RBGenius.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+
         bg.add(RBEasy);
         bg.add(RBNormal);
         bg.add(RBExpert);
         bg.add(RBGenius);
         
+        PanelOpciones.add(Box.createVerticalStrut(30));
         PanelOpciones.add(RBEasy);
         PanelOpciones.add(RBNormal);
         PanelOpciones.add(RBExpert);
@@ -66,7 +81,7 @@ public class DialogDificultad extends JDialog {
         raiz.add(PanelOpciones, BorderLayout.CENTER);
         
         JPanel PanelBotones = new JPanel();
-        PanelBotones.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        PanelBotones.setLayout(new BoxLayout(PanelBotones, BoxLayout.Y_AXIS));
         PanelBotones.setOpaque(false);
         
         BtnConfirmar = new JButton("GUARDAR");
@@ -81,10 +96,14 @@ public class DialogDificultad extends JDialog {
             dispose();
         });
         
+        PanelBotones.add(Box.createVerticalStrut(15));
         PanelBotones.add(BtnConfirmar);
+        PanelBotones.add(Box.createVerticalStrut(10));
         PanelBotones.add(BtnCancelar);
         
         raiz.add(PanelBotones, BorderLayout.SOUTH);
+        
+        PanelFondo.add(raiz);
     }
     
     private JRadioButton CrearRadio(Dificultad dificultad, Dificultad actual) {
@@ -99,6 +118,7 @@ public class DialogDificultad extends JDialog {
     }
     
     private void EstilizarBoton(JButton boton) {
+        boton.setAlignmentX(Component.CENTER_ALIGNMENT);
         boton.setFont(new Font("DIN Condensed", Font.BOLD, 18));
         boton.setBackground(new Color(25, 25, 25)); //Gris oscuro tipo metal
         boton.setForeground(new Color(220, 180, 120)); //Dorado suave

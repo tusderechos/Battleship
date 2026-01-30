@@ -10,6 +10,9 @@ package UI;
  */
 
 import ManejoCuentas.MemoriaCuentas;
+import enums.Dificultad;
+import enums.ModoJuego;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -22,6 +25,9 @@ public class Configuracion extends JFrame {
     private final JButton BtnVolver;
     
     private final String UsuarioActivo;
+    
+    private Dificultad dificultad = Dificultad.NORMAL;
+    private ModoJuego modoJuego = ModoJuego.TUTORIAL;
     
     private MemoriaCuentas Memoria;
     private MenuPrincipal menuPrincipal;
@@ -56,12 +62,12 @@ public class Configuracion extends JFrame {
         
         BtnDificultad = new JButton("DIFICULTAD");
         BtnDificultad.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        BtnDificultad.addActionListener(e -> MostrarDificultad());
+        BtnDificultad.addActionListener(e -> MostrarDificultad());
         EstilizarBoton(BtnDificultad);
 
         BtnModoJuego = new JButton("MODO DE JUEGO");
         BtnModoJuego.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        BtnModoJuego.addActionListener(e -> MostrarModoJuego());
+        BtnModoJuego.addActionListener(e -> MostrarModoJuego());
         EstilizarBoton(BtnModoJuego);
 
         BtnVolver = new JButton("VOLVER  ");
@@ -80,9 +86,29 @@ public class Configuracion extends JFrame {
         PanelFondo.add(PanelBotones, BorderLayout.CENTER);
     }
     
+    private void MostrarDificultad() {
+        DialogDificultad diadiff = new DialogDificultad(this, dificultad);
+        diadiff.setVisible(true);
+        dificultad = diadiff.getSeleccion();
+    }
+    
+    private void MostrarModoJuego() {
+        DialogModoJuego diamodo = new DialogModoJuego(this, modoJuego);
+        diamodo.setVisible(true);
+        modoJuego = diamodo.getSeleccion();
+    }
+    
     private void OnVolver() {
         this.dispose();
         menuPrincipal.setVisible(true);
+    }
+
+    public Dificultad getDificultad() {
+        return dificultad;
+    }
+
+    public ModoJuego getModoJuego() {
+        return modoJuego;
     }
     
     private void EstilizarBoton(JButton boton) {
