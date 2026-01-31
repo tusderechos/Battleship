@@ -15,6 +15,8 @@ import LogicaJuego.Battleship;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class PanelJuego extends JFrame {
     
@@ -94,6 +96,7 @@ public class PanelJuego extends JFrame {
                 g.drawImage(ImagenFondo, 0, 0, getWidth(), getHeight(), this);
             }
         };
+        PanelFondo.setLayout(new BorderLayout());
         
         setTitle("BATTLESHIP - Juego");
         setSize(1100, 820);
@@ -133,6 +136,7 @@ public class PanelJuego extends JFrame {
         //Panel central
         JPanel PanelCentral = new JPanel();
         PanelCentral.setLayout(new GridLayout(1, 2, 18, 0));
+        PanelCentral.setOpaque(false);
         PanelCentral.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
         PanelCentral.setBackground(new Color(15, 15, 25));
         
@@ -180,8 +184,13 @@ public class PanelJuego extends JFrame {
         //Panel inferior
         JPanel PanelBajo = new JPanel();
         PanelBajo.setLayout(new BorderLayout());
-        PanelBajo.setBackground(new Color(10, 10, 20));
-        PanelBajo.setBorder(BorderFactory.createEmptyBorder(12, 18, 12, 18));
+        PanelBajo.setOpaque(false);
+        
+        JPanel BarraInferior = new JPanel();
+        BarraInferior.setLayout(new BorderLayout());
+        BarraInferior.setOpaque(true);
+        BarraInferior.setBackground(new Color(0, 0, 0, 170));
+        BarraInferior.setBorder(BorderFactory.createEmptyBorder(12, 18, 12, 18));
         
         JPanel PanelInfo = new JPanel();
         PanelInfo.setOpaque(false);
@@ -198,9 +207,7 @@ public class PanelJuego extends JFrame {
         PanelInfo.add(LblColocando);
         PanelInfo.add(Box.createVerticalStrut(4));
         PanelInfo.add(LblSeleccion);
-        
-        PanelBajo.add(PanelInfo, BorderLayout.WEST);
-        
+                
         JPanel PanelControles = new JPanel();
         PanelControles.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         PanelControles.setOpaque(false);
@@ -209,12 +216,16 @@ public class PanelJuego extends JFrame {
         CBBarco.setPreferredSize(new Dimension(90, 30));
         
         BtnRotar = new JButton("ROTAR (H)");
+        EstilizarBoton(BtnRotar);
         BtnRotar.addActionListener(e -> onRotar());
         
-        BtnConfirmarColocacion = new JButton("LISTO / CAMBIAR JUGADOR");
+        BtnConfirmarColocacion = new JButton("TERMINAR FASE");
+        EstilizarBoton(BtnConfirmarColocacion);
+        BtnConfirmarColocacion.setPreferredSize(new Dimension(180, 40));
         BtnConfirmarColocacion.addActionListener(e -> onConfirmarColocacion());
         
         BtnRetirar = new JButton("RETIRAR");
+        EstilizarBoton(BtnRetirar);
         BtnRetirar.addActionListener(e -> onRetirar());
         
         PanelControles.add(new JLabel("Barco:"));
@@ -223,8 +234,18 @@ public class PanelJuego extends JFrame {
         PanelControles.add(BtnConfirmarColocacion);
         PanelControles.add(BtnRetirar);
         
-        PanelBajo.add(PanelControles, BorderLayout.EAST);
+        for (Component c : PanelControles.getComponents()) {
+            if (c instanceof JLabel) {
+                c.setForeground(new Color(220, 220, 220));
+                c.setFont(new Font("DIN Condensed", Font.BOLD, 14));
+            }
+        }
         
+        BarraInferior.add(PanelInfo, BorderLayout.WEST);
+        BarraInferior.add(PanelControles, BorderLayout.EAST);
+        
+        PanelBajo.add(BarraInferior, BorderLayout.CENTER);
+                
         PanelFondo.add(PanelBajo, BorderLayout.SOUTH);
         
         //Ajuste inicial de botones segun fase
@@ -260,11 +281,20 @@ public class PanelJuego extends JFrame {
         
         if (FaseColocacion) {
             //Aqui aseguro que solo se muestre el tablero del jugador que esta en la fase de colocacion
-            char[][] tablero = Juego.getTablero(JugadorColocando);
-            RenderizarTablero(tablero, BtnMiTablero, true);
+            if (JugadorColocando == 1) {
+                RenderizarTablero(Juego.getTablero(1), BtnMiTablero, true);
+                LimpiarGrid(BtnTableroRival);
+                
+                setGridEnabled(BtnMiTablero, true);
+                setGridEnabled(BtnTableroRival, false);
+            } else {
+                LimpiarGrid(BtnMiTablero);
+                RenderizarTablero(Juego.getTablero(2), BtnTableroRival, true);
+                
+                setGridEnabled(BtnMiTablero, false);
+                setGridEnabled(BtnTableroRival, true);
+            }
             
-            //Durante la fase de colocacion, el tablero del rival se mostrara en blanco
-            LimpiarGrid(BtnTableroRival);
             return;
         }
         
@@ -345,57 +375,84 @@ public class PanelJuego extends JFrame {
     }
     
     private void onClickMiTablero(JButton boton) {
-        if (!FaseColocacion) {
-            return;
-        }
-        
         int fila = (int) boton.getClientProperty("fila");
         int col = (int) boton.getClientProperty("col");
         
-        String codigo = (String) CBBarco.getSelectedItem();
-        Resultado resultado = Juego.ColocarBarco(JugadorColocando, codigo, fila, col, orientacion);
-        
-        if (resultado != Resultado.OK) {
-            JOptionPane.showMessageDialog(this, ColocarMensaje(resultado), "Aviso", JOptionPane.WARNING_MESSAGE);
+        if (FaseColocacion) {
+            if (JugadorColocando != 1)
+                return;
+            
+            String codigo = (String) CBBarco.getSelectedItem();
+            Resultado resultado = Juego.ColocarBarco(1, codigo, fila, col, orientacion);
+
+            if (resultado != Resultado.OK) {
+                JOptionPane.showMessageDialog(this, ColocarMensaje(resultado), "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            RenderizarTodo();
             return;
         }
         
-        RenderizarTodo();
+        if (Juego.getTurno() != 2)
+            return;
+        
+        ProcesarDisparo(fila, col);
     }
     
     private void onClickRival(JButton boton) {
-        if (FaseColocacion) {
-            return;
-        }
-        
         int fila = (int) boton.getClientProperty("fila");
         int col = (int) boton.getClientProperty("col");
         
+        
+        if (FaseColocacion) {
+            if (JugadorColocando != 2)
+                return;
+            
+            String codigo = (String) CBBarco.getSelectedItem();
+            Resultado resultado = Juego.ColocarBarco(2, codigo, fila, col, orientacion);
+
+            if (resultado != Resultado.OK) {
+                JOptionPane.showMessageDialog(this, ColocarMensaje(resultado), "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            RenderizarTodo();
+            return;
+        }
+        
+        if (Juego.getTurno() != 1)
+            return;
+        
+        ProcesarDisparo(fila, col);
+    }
+    
+    private void ProcesarDisparo(int fila, int col) {
         Resultado resultado = Juego.Disparar(fila, col, false);
         
         if (resultado == Resultado.INVALIDO) {
-            JOptionPane.showMessageDialog(this, "Tiro invalido o repetido", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tiro invalid o repetido", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (resultado == Resultado.FUERA_RANGO) {
-            JOptionPane.showMessageDialog(this, "Fuera del Tablero", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Fuera del tablero", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        
         if (resultado == Resultado.MISS) {
             JOptionPane.showMessageDialog(this, "Fallaste!", "Turno", JOptionPane.INFORMATION_MESSAGE);
         } else if (resultado == Resultado.HIT) {
-            JOptionPane.showMessageDialog(this, "Impacto!! \nTablero rival se regenero", "Turno", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Impacto!!\nEl tablero del rival de regenera!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else if (resultado == Resultado.GANO) {
-            JOptionPane.showMessageDialog(this, "Gano " + Juego.getJugadorTurno() + "\n(+3 puntos)", "Fin Partida", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El jugador " + Juego.getJugadorTurno() + " ha ganado!\n(+3 puntos)", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
             Volver();
             return;
         } else if (resultado == Resultado.RETIRO) {
-            JOptionPane.showMessageDialog(this, "Retiro confirmado", "Fin Partida", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Retiro del jugador " + Juego.getJugadorTurno() + " confirmado", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
             Volver();
             return;
         }
         
-        ActualizarLabels();
         RenderizarTodo();
     }
     
@@ -549,5 +606,30 @@ public class PanelJuego extends JFrame {
         }
         
         return "Entrada invalida";
+    }
+    
+    private void EstilizarBoton(JButton boton) {
+        boton.setFont(new Font("DIN Condensed", Font.BOLD, 15));
+        boton.setBackground(new Color(25, 25, 25)); //Gris oscuro tipo metal
+        boton.setForeground(new Color(220, 180, 120)); //Dorado suave
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 2), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        boton.setOpaque(true);
+        boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        boton.setPreferredSize(new Dimension(140, 40));
+        
+        boton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                boton.setBackground(new Color(0, 0, 60));
+                boton.setForeground(new Color(255, 220, 130));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                boton.setBackground(new Color(25, 25, 25));
+                boton.setForeground(new Color(220, 180, 80));
+            }
+        });
     }
 }

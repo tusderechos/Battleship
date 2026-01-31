@@ -36,7 +36,7 @@ public class Player {
     public void AgregarLog(String fecha, String rival, String resultado) {
         String entrada = fecha + " | Rival: " + rival + " | " + resultado;
                 
-        for (int i = Logs.length; i >=  1; i--) {
+        for (int i = Logs.length - 1; i > 0; i--) {
             Logs[i] = Logs[i - 1];
         }
         
