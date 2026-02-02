@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.text.JTextComponent;
 
 public class MiPerfil extends JFrame {
     
@@ -212,24 +213,86 @@ public class MiPerfil extends JFrame {
     
     private void CambiarContrasena(int indice) {
         JPasswordField passactual = new JPasswordField();
+        EstilizarCampoTexto(passactual);
         JPasswordField passnueva = new JPasswordField();
+        EstilizarCampoTexto(passnueva);
         JPasswordField passconfirm = new JPasswordField();
+        EstilizarCampoTexto(passconfirm);
         
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(0, 1, 6, 6));
+        ImageIcon IconoFondo = new ImageIcon(getClass().getResource("/images/bg_modificardatos.PNG"));
+        Image ImagenFondo = IconoFondo.getImage();
         
-        panel.add(new JLabel("Contraseña actual: "));
-        panel.add(passactual);
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(ImagenFondo, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        panel.setLayout(new GridLayout());
+        panel.setOpaque(true);
         
-        panel.add(new JLabel("Contraseña nueva: "));
-        panel.add(passnueva);
+        JPanel card = new RoundedPanel(20, new Color(0, 0, 0, 170));
+        card.setLayout(new GridBagLayout());
+        card.setBorder(BorderFactory.createEmptyBorder(16, 18, 16, 18));
+        card.setOpaque(false);
         
-        panel.add(new JLabel("Confirmar contraseña nueva: "));
-        panel.add(passconfirm);
+        JLabel titulo = new JLabel("CAMBIAR CONTRASEÑA");
+        titulo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
+        titulo.setForeground(Color.WHITE);
         
-        int respuesta = JOptionPane.showConfirmDialog(this, panel, "Cambiar Contraseña", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        JLabel lblcontactual = new JLabel("Contraseña actual: ");
+        EstilizarLabel(lblcontactual);
+        JLabel lblcontnueva = new JLabel("Contraseña nueva: ");
+        EstilizarLabel(lblcontnueva);
+        JLabel lblcontconfir = new JLabel("Confirmar contraseña nueva: ");
+        EstilizarLabel(lblcontconfir);
         
-        if (respuesta != JOptionPane.OK_OPTION)
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 0, 12, 0);
+        card.add(titulo, gbc);
+        
+        gbc.gridwidth = 1;
+        gbc.gridy++;
+        gbc.insets = new Insets(6, 0, 4, 10);
+        card.add(lblcontactual, gbc);
+        
+        gbc.gridx = 1;
+        gbc.insets = new Insets(6, 0, 4, 0);
+        card.add(passactual, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = new Insets(10, 0, 4, 10);
+        card.add(lblcontnueva, gbc);
+        
+        gbc.gridx = 1;
+        gbc.insets = new Insets(10, 0, 4, 0);
+        card.add(passnueva, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = new Insets(10, 0, 4, 10);
+        card.add(lblcontconfir, gbc);
+        
+        gbc.gridx = 1;
+        gbc.insets = new Insets(10, 0, 4, 0);
+        card.add(passconfirm, gbc);
+        
+        GridBagConstraints bgc = new GridBagConstraints();
+        bgc.insets = new Insets(20, 20, 20, 20);
+        bgc.fill = GridBagConstraints.NONE;
+        
+        panel.add(card, bgc);
+        
+        Object[] opciones = {"GUARDAR", "CANCELAR"};
+        int respuesta = JOptionPane.showOptionDialog(this, panel, "Cambiar Contraseña", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, opciones, opciones[0]);
+
+        if (respuesta != 0)
             return;
         
         String actual = new String(passactual.getPassword()).trim();
@@ -246,8 +309,9 @@ public class MiPerfil extends JFrame {
             return;
         }
         
-        if (!Memoria.ValidarContrasenaActual(indice, nueva)) {
+        if (!Memoria.ValidarContrasenaActual(indice, actual)) {
             JOptionPane.showMessageDialog(this, "Contraseña actual incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
         
         boolean actualizado = Memoria.ActualizarContrasena(indice, nueva);
@@ -301,19 +365,6 @@ public class MiPerfil extends JFrame {
         });
     }
     
-    private void EstilizarTitulo(JLabel titulo) {
-        titulo.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        Font base = new Font("Old English Text MT", Font.BOLD, 38);
-        titulo.setFont(base);
-        
-        titulo.setForeground(new Color(230, 200, 120));
-        titulo.setOpaque(true);
-        titulo.setBackground(new Color(0, 0, 0, 170)); //Franja oscura
-        titulo.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-    }
-    
     private void EstilizarLabel(JLabel label) {
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setFont(new Font("DIN Condensed", Font.BOLD, 22));
@@ -323,5 +374,29 @@ public class MiPerfil extends JFrame {
         label.setOpaque(true);
         label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
+    }
+    
+    private void EstilizarCampoTexto(JTextComponent campo) {
+        campo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
+        campo.setBackground(new Color(25, 25, 25));
+        campo.setForeground(Color.WHITE);
+        campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(0, 0, 120), 2), BorderFactory.createEmptyBorder(5, 20, 5, 20)));
+        campo.setOpaque(true);
+        campo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        campo.setPreferredSize(new Dimension(220, 44));
+        
+        campo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                campo.setBackground(new Color(60, 0, 0));
+                campo.setForeground(new Color(255, 220, 130));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                campo.setBackground(new Color(25, 25, 25));
+                campo.setForeground(Color.WHITE);
+            }
+        });
     }
 }

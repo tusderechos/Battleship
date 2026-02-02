@@ -213,6 +213,7 @@ public class PanelJuego extends JFrame {
         PanelControles.setOpaque(false);
         
         CBBarco = new JComboBox<>(new String[]{"PA", "AZ", "SM", "DT"});
+        EstilizarBoton(CBBarco);
         CBBarco.setPreferredSize(new Dimension(90, 30));
         
         BtnRotar = new JButton("ROTAR (H)");
@@ -608,11 +609,11 @@ public class PanelJuego extends JFrame {
         return "Entrada invalida";
     }
     
-    private void EstilizarBoton(JButton boton) {
+    private void EstilizarBoton(JComponent boton) {
         boton.setFont(new Font("DIN Condensed", Font.BOLD, 15));
         boton.setBackground(new Color(25, 25, 25)); //Gris oscuro tipo metal
         boton.setForeground(new Color(220, 180, 120)); //Dorado suave
-        boton.setFocusPainted(false);
+//        boton.setFocusPainted(false);
         boton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 2), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
         boton.setOpaque(true);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
