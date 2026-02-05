@@ -323,17 +323,6 @@ public class MenuPrincipal extends JFrame {
         titulo.setOpaque(false);
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
     }
-    
-    private void EstilizarLabel(JLabel label) {
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setFont(new Font("Old English Text MT", Font.BOLD, 22));
-        label.setForeground(new Color(230, 230, 150));
-        label.setBackground(new Color(0, 0, 0, 150));
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        label.setOpaque(true);
-        label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-    }
 
     public void setDificultadActual(Dificultad DificultadActual) {
         this.DificultadActual = DificultadActual;

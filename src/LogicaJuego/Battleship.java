@@ -18,9 +18,9 @@ import java.util.Random;
 
 public class Battleship {
     
-    public static final char AGUA = '~';
-    public static final char HIT = 'X';
-    public static final char MISS = 'F';
+    public static final String AGUA = "~";
+    public static final String HIT = "X";
+    public static final String MISS = "F";
     
     private final MemoriaCuentas Memoria;
     private final Dificultad dificultad;
@@ -29,31 +29,34 @@ public class Battleship {
     private String Jugador1;
     private String Jugador2;
     
-    private char[][] Tablero1;
-    private char[][] Tablero2;
+    private final String[][] Tablero1;
+    private final String[][] Tablero2;
     
     private int Turno = 1;
     private int Colocados1 = 0;
     private int Colocados2 = 0;
     
-    private int[] Usados1 = new int[4];
-    private int[] Usados2 = new int[4];
+    private final int[] Usados1 = new int[4];
+    private final int[] Usados2 = new int[4];
     
     private final Random random = new Random();
+    
+    private String UltimoBarcoHundido = null;
+    private int UltimoJugadorAfectado = -1;
     
     public Battleship(MemoriaCuentas Memoria, Dificultad dificultad, ModoJuego Modo) {
         this.Memoria = Memoria;
         this.dificultad = dificultad;
         this.Modo = Modo;
         
-        Tablero1 = new char[8][8];
-        Tablero2 = new char[8][8];
+        Tablero1 = new String[8][8];
+        Tablero2 = new String[8][8];
         
         Llenar(Tablero1);
         Llenar(Tablero2);
     }
     
-    private void Llenar(char[][] tablero) {
+    private void Llenar(String[][] tablero) {
         for (int fila = 0; fila < 8; fila++) {
             for (int col = 0; col < 8; col++) {
                 tablero[fila][col] = AGUA;
@@ -78,7 +81,7 @@ public class Battleship {
         return true;
     }
     
-    public char[][] getTablero(int jugador) {
+    public String[][] getTablero(int jugador) {
         return (jugador == 1) ? Tablero1 : Tablero2;
     }
     
@@ -106,7 +109,7 @@ public class Battleship {
             }
         }
         
-        char[][] tab = (jugador == 1) ? Tablero1 : Tablero2;
+        String[][] tab = (jugador == 1) ? Tablero1 : Tablero2;
         
         int finF = fila + ((orientacion == Orientacion.VERTICAL) ? tb.longitud - 1 : 0);
         int finC = col + ((orientacion == Orientacion.HORIZONTAL) ? tb.longitud - 1 : 0);
@@ -119,7 +122,7 @@ public class Battleship {
             int f = fila + ((orientacion == Orientacion.VERTICAL) ? i : 0);
             int c = col + ((orientacion == Orientacion.HORIZONTAL) ? i : 0);
             
-            if (tab[f][c] != AGUA) {
+            if (!tab[f][c].equals(AGUA)) {
                 return Resultado.CHOCA;
             }
         }
@@ -128,7 +131,7 @@ public class Battleship {
             int f = fila + ((orientacion == Orientacion.VERTICAL) ? i : 0);
             int c = col + ((orientacion == Orientacion.HORIZONTAL) ? i : 0);
             
-            tab[f][c] = tb.simbolo;
+            tab[f][c] = tb.codigo;
         }
         
         usados[indice]++;
@@ -152,24 +155,30 @@ public class Battleship {
             return Resultado.INVALIDO;
         }
         
-        char[][] rival = (Turno == 1) ? Tablero2 : Tablero1;
+        String[][] rival = (Turno == 1) ? Tablero2 : Tablero1;
+        UltimoJugadorAfectado = (Turno == 1) ? 2 : 1;
         
         if (!enRango(fila, col)) {
             return Resultado.FUERA_RANGO;
         }
         
-        if (rival[fila][col] == AGUA) {
+        if (rival[fila][col].equals(AGUA)) {
             rival[fila][col] = MISS;
             CambiarTurno();
+            UltimoBarcoHundido = null;
             
             return Resultado.MISS;
         }
         
-        if (rival[fila][col] == HIT || rival[fila][col] == MISS) {
+        if (rival[fila][col].equals(HIT) || rival[fila][col].equals(MISS)) {
             return Resultado.INVALIDO;
         }
         
+        String barcoimpactado = rival[fila][col];
         rival[fila][col] = HIT;
+        
+        UltimoBarcoHundido = DetectarBarcoHundido(rival, barcoimpactado);
+        
         Regenerar(rival);
         
         if (!QuedanBarcos(rival)) {
@@ -188,11 +197,11 @@ public class Battleship {
         return f >= 0 && f < 8 && c >= 0 && c < 8;
     }
     
-    private boolean QuedanBarcos(char[][] tablero) {
+    private boolean QuedanBarcos(String[][] tablero) {
         for (int fila = 0; fila < 8; fila++) {
             for (int col = 0; col < 8; col++) {
                 for(TipoBarco tb : TipoBarco.values()) {
-                    if (tablero[fila][col] == tb.simbolo)
+                    if (tablero[fila][col].equals(tb.codigo))
                         return true;
                 }
             }
@@ -201,20 +210,20 @@ public class Battleship {
         return false;
     }
     
-    private void Regenerar(char[][] tablero) {
-        char[][] nuevo = new char[8][8];
+    private void Regenerar(String[][] tablero) {
+        String[][] nuevo = new String[8][8];
         Llenar(nuevo);
         
         for (int fila = 0; fila < 8; fila++) {
             for (int col = 0; col < 8; col++) {
-                if (tablero[fila][col] == HIT)
+                if (tablero[fila][col].equals(HIT))
                     nuevo[fila][col] = HIT;
             }
         }
         
         for (TipoBarco tb : TipoBarco.values()) {
-            int vivos = Contar(tablero, tb.simbolo);
-            ColocarAleatorio(nuevo, tb.simbolo, vivos);
+            int vivos = Contar(tablero, tb.codigo);
+            ColocarAleatorio(nuevo, tb.codigo, vivos);
         }
         
         for (int i = 0; i < 8; i++) {
@@ -222,12 +231,12 @@ public class Battleship {
         }
     }
     
-    private int Contar(char[][] tablero, char s) {
+    private int Contar(String[][] tablero, String s) {
         int c = 0;
         
         for (int fila = 0; fila < 8; fila++) {
             for (int col = 0; col < 8; col++) {
-                if (tablero[fila][col] == s)
+                if (tablero[fila][col].equals(s))
                     c++;
             }
         }
@@ -235,7 +244,7 @@ public class Battleship {
         return c;
     }
     
-    private void ColocarAleatorio(char[][] tablero, char s, int len) {
+    private void ColocarAleatorio(String[][] tablero, String s, int len) {
         if (len == 0) {
             return;
         }
@@ -258,7 +267,7 @@ public class Battleship {
                 int r = fila + (wasd ? 0 : i);
                 int co = col + (wasd ? i : 0);
                 
-                if (tablero[r][co] != AGUA) {
+                if (!tablero[r][co].equals(AGUA)) {
                     ok = false;
                     break;
                 }
@@ -295,6 +304,18 @@ public class Battleship {
         Memoria.AgregarLog(ganador, fecha, perdedor, "GANO (RETIRO)");
         Memoria.AgregarLog(perdedor, fecha, ganador, "SE HA RETIRADO");
         Memoria.SumarPuntos(ganador, 3);
+    }
+    
+    private String DetectarBarcoHundido(String[][] tablero, String codigobarco) {
+        for (int fila = 0; fila < 8; fila++) {
+            for (int col = 0; col < 8; col++) {
+                if (tablero[fila][col].equals(codigobarco)) {
+                    return null;
+                }
+            }
+        }
+        
+        return codigobarco;
     }
     
     private String Fecha() {
@@ -339,5 +360,13 @@ public class Battleship {
     
     public int getMaxBarcos() {
         return dificultad.getBarcos();
+    }
+
+    public String getUltimoBarcoHundido() {
+        return UltimoBarcoHundido;
+    }
+
+    public int getUltimoJugadorAfectado() {
+        return UltimoJugadorAfectado;
     }
 }

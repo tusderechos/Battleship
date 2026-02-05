@@ -49,6 +49,7 @@ public class IniciarSesion extends JDialog {
         setSize(700, 700);
         setResizable(false);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setLocationRelativeTo(null);
         
         JPanel PanelInfo = new JPanel();
         PanelInfo.setLayout(new BoxLayout(PanelInfo, BoxLayout.Y_AXIS));

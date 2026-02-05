@@ -35,9 +35,14 @@ public class PanelJuego extends JFrame {
     
     private JLabel LblTitulo;
     private JLabel LblEstado;
-    private JLabel LblTurno;
     private JLabel LblColocando;
     private JLabel LblSeleccion;
+    
+    private JLabel LblMiTableroTitulo;
+    private JLabel LblTableroRivalTitulo;
+    
+    private JPanel PanelMiTablero;
+    private JPanel PanelTableroRival;
     
     private JComboBox<String> CBBarco;
     private JButton BtnRotar;
@@ -47,6 +52,9 @@ public class PanelJuego extends JFrame {
     private boolean FaseColocacion = true;
     private int JugadorColocando = 1;
     private Orientacion orientacion = Orientacion.HORIZONTAL;
+    
+    private final Point[] PreviewCeldas = new Point[5];
+    private int CuentaPreview = 0;
     
     public PanelJuego(MemoriaCuentas Memoria, String UsuarioActivo, MenuPrincipal menuPrincipal, Dificultad dificultad, ModoJuego Modo) {
         this.Memoria = Memoria;
@@ -73,10 +81,8 @@ public class PanelJuego extends JFrame {
             
             return;
         }
-        
-        boolean ok = Juego.IniciarPartida(this.UsuarioActivo, jugador2);
-        
-        if (!ok) {
+                
+        if (!Juego.IniciarPartida(this.UsuarioActivo, jugador2)) {
             JOptionPane.showMessageDialog(null, "No se pudo iniciar la partida", "Error", JOptionPane.ERROR_MESSAGE);
             dispose();
             
@@ -105,31 +111,45 @@ public class PanelJuego extends JFrame {
         setLocationRelativeTo(menuPrincipal);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
+        //Todo el header
         JPanel PanelHeader = new JPanel();
         PanelHeader.setLayout(new BoxLayout(PanelHeader, BoxLayout.Y_AXIS));
         PanelHeader.setBackground(new Color(10, 10, 20));
-        PanelHeader.setBorder(BorderFactory.createEmptyBorder(12, 18, 12, 18));
+        PanelHeader.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(80, 80, 120)), BorderFactory.createEmptyBorder(18, 20, 18, 20)));
         
-        LblTitulo = new JLabel("BATTLESHIP");
-        LblTitulo.setForeground(new Color(235, 235, 255));
-        LblTitulo.setFont(new Font("ITC Machine Std", Font.PLAIN, 40));
+        LblTitulo = new JLabel("BATTLESHIP", SwingConstants.CENTER);
+        LblTitulo.setForeground(new Color(240, 240, 255));
+        LblTitulo.setFont(new Font("ITC Machine Std", Font.PLAIN, 46));
         LblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        LblTurno = new JLabel("");
-        LblTurno.setForeground(new Color(200, 220, 255));
-        LblTurno.setFont(new Font("DIN Condensed", Font.BOLD, 16));
-        LblTurno.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        LblEstado = new JLabel("");
-        LblEstado.setForeground(new Color(220, 220, 220));
-        LblEstado.setFont(new Font("DIN Condensed", Font.BOLD, 14));
+        LblEstado = new JLabel("", SwingConstants.CENTER);
+        LblEstado.setForeground(Color.WHITE);
+        LblEstado.setFont(new Font("DIN Condensed", Font.BOLD, 20));
         LblEstado.setAlignmentX(Component.CENTER_ALIGNMENT);
         
+        JPanel PanelSubEstado = new JPanel();
+        PanelSubEstado.setLayout(new GridLayout(1, 2, 40, 0));
+        PanelSubEstado.setOpaque(false);
+        PanelSubEstado.setMaximumSize(new Dimension(800, 30));
+        
+        LblColocando = new JLabel();
+        LblColocando.setHorizontalAlignment(SwingConstants.CENTER);
+        LblColocando.setForeground(Color.WHITE);
+        LblColocando.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        
+        LblSeleccion = new JLabel();
+        LblSeleccion.setHorizontalAlignment(SwingConstants.CENTER);
+        LblSeleccion.setForeground(Color.WHITE);
+        LblSeleccion.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        
+        PanelSubEstado.add(LblColocando);
+        PanelSubEstado.add(LblSeleccion);
+        
         PanelHeader.add(LblTitulo);
-        PanelHeader.add(Box.createVerticalStrut(6));
-        PanelHeader.add(LblTurno);
-        PanelHeader.add(Box.createVerticalStrut(4));
+        PanelHeader.add(Box.createVerticalStrut(8));
         PanelHeader.add(LblEstado);
+        PanelHeader.add(Box.createVerticalStrut(10));
+        PanelHeader.add(PanelSubEstado);
         
         PanelFondo.add(PanelHeader, BorderLayout.NORTH);
         
@@ -138,80 +158,27 @@ public class PanelJuego extends JFrame {
         PanelCentral.setLayout(new GridLayout(1, 2, 18, 0));
         PanelCentral.setOpaque(false);
         PanelCentral.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
-        PanelCentral.setBackground(new Color(15, 15, 25));
         
-        //Todo lo que tiene que ver con el tablero del usuario conectado
-        JPanel PanelMiTablero = new JPanel();
-        PanelMiTablero.setLayout(new BorderLayout());
-        PanelMiTablero.setBackground(new Color(20, 20, 35));
-        PanelMiTablero.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        PanelMiTablero = CrearPanelTablero(true);
+        BtnMiTablero = CrearGrid(PanelMiTablero, true);
         
-        JLabel LblMiTablero = new JLabel("MI TABLERO", SwingConstants.CENTER);
-        LblMiTablero.setForeground(new Color(220, 220, 255));
-        LblMiTablero.setFont(new Font("DIN Condensed", Font.BOLD, 16));
-        
-        PanelMiTablero.add(LblMiTablero, BorderLayout.NORTH);
-        
-        JPanel PanelGridMiTablero = new JPanel();
-        PanelGridMiTablero.setBackground(new Color(20, 20, 35));
-        BtnMiTablero = CrearGridBotones(PanelGridMiTablero, true);
-        
-        PanelMiTablero.add(PanelGridMiTablero, BorderLayout.CENTER);
-        
-        //Todo lo que tiene que ver con el tablero del rival
-        JPanel PanelTableroRival = new JPanel();
-        PanelTableroRival.setLayout(new BorderLayout());
-        PanelTableroRival.setBackground(new Color(20, 20, 35));
-        PanelTableroRival.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-        
-        JLabel LblTableroRival = new JLabel("TABLERO RIVAL", SwingConstants.CENTER);
-        LblTableroRival.setForeground(new Color(220, 220, 255));
-        LblTableroRival.setFont(new Font("DIN Condensed", Font.BOLD, 16));
-        
-        PanelTableroRival.add(LblTableroRival, BorderLayout.NORTH);
-        
-        JPanel PanelGridTableroRival = new JPanel();
-        PanelGridTableroRival.setBackground(new Color(20, 20, 35));
-        BtnTableroRival = CrearGridBotones(PanelGridTableroRival, false);
-        
-        PanelTableroRival.add(PanelGridTableroRival, BorderLayout.CENTER);
+        PanelTableroRival = CrearPanelTablero(false);
+        BtnTableroRival = CrearGrid(PanelTableroRival, false);
         
         PanelCentral.add(PanelMiTablero);
         PanelCentral.add(PanelTableroRival);
         
         PanelFondo.add(PanelCentral, BorderLayout.CENTER);
         
-        //Panel inferior
-        JPanel PanelBajo = new JPanel();
-        PanelBajo.setLayout(new BorderLayout());
-        PanelBajo.setOpaque(false);
-        
+        //Barra inferior
         JPanel BarraInferior = new JPanel();
-        BarraInferior.setLayout(new BorderLayout());
-        BarraInferior.setOpaque(true);
+        BarraInferior.setLayout(new FlowLayout(FlowLayout.CENTER, 12, 8));
         BarraInferior.setBackground(new Color(0, 0, 0, 170));
-        BarraInferior.setBorder(BorderFactory.createEmptyBorder(12, 18, 12, 18));
         
-        JPanel PanelInfo = new JPanel();
-        PanelInfo.setOpaque(false);
-        PanelInfo.setLayout(new BoxLayout(PanelInfo, BoxLayout.Y_AXIS));
-        
-        LblColocando = new JLabel("");
-        LblColocando.setForeground(new Color(220, 220, 220));
-        LblColocando.setFont(new Font("DIN Condensed", Font.PLAIN, 14));
-        
-        LblSeleccion = new JLabel("");
-        LblSeleccion.setForeground(new Color(220, 220, 220));
-        LblSeleccion.setFont(new Font("DIN Condensed", Font.PLAIN, 14));
-        
-        PanelInfo.add(LblColocando);
-        PanelInfo.add(Box.createVerticalStrut(4));
-        PanelInfo.add(LblSeleccion);
-                
-        JPanel PanelControles = new JPanel();
-        PanelControles.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        PanelControles.setOpaque(false);
-        
+        JLabel LblBarco = new JLabel("BARCO:");
+        LblBarco.setForeground(Color.WHITE);
+        LblBarco.setFont(new Font("DIN Condensed", Font.BOLD, 18));
+
         CBBarco = new JComboBox<>(new String[]{"PA", "AZ", "SM", "DT"});
         EstilizarBoton(CBBarco);
         CBBarco.setPreferredSize(new Dimension(90, 30));
@@ -229,51 +196,102 @@ public class PanelJuego extends JFrame {
         EstilizarBoton(BtnRetirar);
         BtnRetirar.addActionListener(e -> onRetirar());
         
-        PanelControles.add(new JLabel("Barco:"));
-        PanelControles.add(CBBarco);
-        PanelControles.add(BtnRotar);
-        PanelControles.add(BtnConfirmarColocacion);
-        PanelControles.add(BtnRetirar);
+        BarraInferior.add(LblBarco);
+        BarraInferior.add(CBBarco);
+        BarraInferior.add(BtnRotar);
+        BarraInferior.add(BtnConfirmarColocacion);
+        BarraInferior.add(BtnRetirar);
         
-        for (Component c : PanelControles.getComponents()) {
-            if (c instanceof JLabel) {
-                c.setForeground(new Color(220, 220, 220));
-                c.setFont(new Font("DIN Condensed", Font.BOLD, 14));
-            }
-        }
-        
-        BarraInferior.add(PanelInfo, BorderLayout.WEST);
-        BarraInferior.add(PanelControles, BorderLayout.EAST);
-        
-        PanelBajo.add(BarraInferior, BorderLayout.CENTER);
-                
-        PanelFondo.add(PanelBajo, BorderLayout.SOUTH);
+        PanelFondo.add(BarraInferior, BorderLayout.SOUTH);
         
         //Ajuste inicial de botones segun fase
         RefrescarControlesPorFase();
-        
-        //Renderizacion inicial
-        ActualizarLabels();
         RenderizarTodo();
     }
     
-    private void RefrescarControlesPorFase() {
-        CBBarco.setEnabled(FaseColocacion);
-        BtnRotar.setEnabled(FaseColocacion);
-        BtnConfirmarColocacion.setEnabled(FaseColocacion);
-        BtnRetirar.setEnabled(!FaseColocacion);
+    private JPanel CrearPanelTablero(boolean esmitablero) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(esmitablero ? UIColors.BORDE_P1.getColor() : UIColors.BORDE_P2.getColor(), 2), BorderFactory.createEmptyBorder(12, 12, 12, 12)));
+        
+        JLabel titulo = new JLabel("", SwingConstants.CENTER);
+        titulo.setForeground(Color.WHITE);
+        titulo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
+        
+        if (esmitablero) {
+            LblMiTableroTitulo = titulo;
+        } else {
+            LblTableroRivalTitulo = titulo;
+        }
+        
+        panel.add(titulo, BorderLayout.NORTH);
+        
+        return panel;
+    }
+    
+    private JButton[][] CrearGrid(JPanel panel, boolean esmitablero) {
+        JPanel grid = new JPanel();
+        grid.setLayout(new GridLayout(8, 8, 2, 2));
+        grid.setOpaque(false);
+        
+        JButton[][] botones = new JButton[8][8];
+        
+        for (int fila = 0; fila < 8; fila++) {
+            for (int col = 0; col < 8; col++) {
+                JButton boton = new JButton();
+                boton.setFont(new Font("DIN Condensed", Font.BOLD, 20));
+                boton.setForeground(Color.WHITE);
+                boton.setMargin(new Insets(0, 0, 0, 0));
+                boton.setPreferredSize(new Dimension(60, 60));
+                boton.setBackground(esmitablero ? UIColors.AGUA_P1.getColor() : UIColors.AGUA_P2.getColor());
+                boton.setOpaque(true);
+                boton.setContentAreaFilled(true);
+                boton.setBorderPainted(true);
+                boton.setFocusPainted(false);
+                boton.putClientProperty("fila", fila);
+                boton.putClientProperty("col", col);
+                
+                if (esmitablero) {
+                    boton.addActionListener(e -> onClickMiTablero(boton));
+                } else {
+                    boton.addActionListener(e -> onClickRival(boton));
+                }
+                
+                boton.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        onHoverCelda(boton, esmitablero);
+                    }
+                    
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        LimpiarPreview();
+                    }
+                });
+                
+                botones[fila][col] = boton;
+                grid.add(boton);
+            }
+        }
+        
+        panel.add(grid, BorderLayout.CENTER);
+        
+        return botones;
     }
     
     private void ActualizarLabels() {
-        LblTurno.setText("Jugador 1: " + Juego.getJugador1() + "   |   Jugador 2: " + Juego.getJugador2());
-        LblEstado.setText("Dificultad: " + dificultad + " (" + dificultad.getBarcos() + " barcos)" + "   |   Modo: " + Modo);
+        LblMiTableroTitulo.setText("TABLERO DE: " + Juego.getJugador1());
+        LblTableroRivalTitulo.setText("TABLERO DE RIVAL: " + Juego.getJugador2());
+        
+        LblEstado.setText("Dificultad: " + dificultad + " (" + dificultad.getBarcos() + " barcos)  |  Modo: " + Modo);
         
         if (FaseColocacion) {
             LblColocando.setText("Colocacion: Jugador " + JugadorColocando + " (" + (JugadorColocando == 1 ? Juego.getJugador1() : Juego.getJugador2()) + ")");
             LblSeleccion.setText("Seleccionado: " + CBBarco.getSelectedItem() + " | Orientacion: " + orientacion);
         } else {
             LblColocando.setText("Turno de: " + Juego.getJugadorTurno());
-            LblSeleccion.setText("Dispara en el tablero rival");
+            LblSeleccion.setText("Dispara en el tablero del rival!");
         }
     }
     
@@ -281,16 +299,15 @@ public class PanelJuego extends JFrame {
         ActualizarLabels();
         
         if (FaseColocacion) {
-            //Aqui aseguro que solo se muestre el tablero del jugador que esta en la fase de colocacion
             if (JugadorColocando == 1) {
-                RenderizarTablero(Juego.getTablero(1), BtnMiTablero, true);
+                RenderizarTablero(Juego.getTablero(1), BtnMiTablero, true, false, true);
                 LimpiarGrid(BtnTableroRival);
                 
                 setGridEnabled(BtnMiTablero, true);
                 setGridEnabled(BtnTableroRival, false);
             } else {
                 LimpiarGrid(BtnMiTablero);
-                RenderizarTablero(Juego.getTablero(2), BtnTableroRival, true);
+                RenderizarTablero(Juego.getTablero(2), BtnTableroRival, true, true, true);
                 
                 setGridEnabled(BtnMiTablero, false);
                 setGridEnabled(BtnTableroRival, true);
@@ -299,27 +316,141 @@ public class PanelJuego extends JFrame {
             return;
         }
         
-        /*
-            Durante el bombardeo al rival:
-            - El tablero del jugador va a ser visible
-            - El tablero del rival va a ser visible solamente si estan en el modo tutorial
-        */
-        boolean mostrarP1 = true;
-        boolean mostrarP2 = true;
+        boolean mostrarp1 = true;
+        boolean mostrarp2 = true;
+        boolean turnop1 = Juego.getTurno() == 1;
         
         if (Modo == ModoJuego.ARCADE) {
-            //Ocultar barcos del rival del que esta jugando
             if (Juego.getTurno() == 1) {
-                mostrarP2 = false; //Turno de P1, se oculta P2
+                mostrarp2 = false;
             } else {
-                mostrarP1 = false; //Turno de P2, se oculta P1
+                mostrarp1 = false;
             }
         }
         
-        RenderizarTablero(Juego.getTablero(1), BtnMiTablero, mostrarP1);
-        RenderizarTablero(Juego.getTablero(2), BtnTableroRival, mostrarP2);
+        RenderizarTablero(Juego.getTablero(1), BtnMiTablero, mostrarp1, false, !turnop1);
+        RenderizarTablero(Juego.getTablero(2), BtnTableroRival, mostrarp2, true, turnop1);
         
         HabilitarClickDisparo();
+    }
+    
+    private void onHoverCelda(JButton boton, boolean esmitablero) {
+        if (!FaseColocacion)
+            return;
+        
+        if ((JugadorColocando == 1 && !esmitablero) || (JugadorColocando == 2 && esmitablero))
+            return;
+        
+        LimpiarPreview();
+        
+        int fila = (int) boton.getClientProperty("fila");
+        int col = (int) boton.getClientProperty("col");
+        
+        int longitudbarco = getLenBarco((String) CBBarco.getSelectedItem());
+        boolean ok = true;
+        
+        JButton[][] grid = (JugadorColocando == 1) ? BtnMiTablero : BtnTableroRival;
+        String[][] modelo = Juego.getTablero(JugadorColocando);
+        
+        //Verificar si el barco cabe
+        for (int i = 0; i < longitudbarco; i++) {
+            int f = fila + (orientacion == Orientacion.VERTICAL ? i : 0);
+            int c = col + (orientacion == Orientacion.HORIZONTAL ? i : 0);
+            
+            if (f < 0 || f >= 8 || c < 0 || c >= 8) {
+                ok = false;
+                break;
+            }
+            if (!modelo[f][c].equals(Battleship.AGUA)) {
+                ok = false;
+                break;
+            }
+        }
+        
+        CuentaPreview = 0;
+        
+        //Pintar el preview
+        for (int i = 0; i < longitudbarco; i++) {
+            int f = fila + (orientacion == Orientacion.VERTICAL ? i : 0);
+            int c = col + (orientacion == Orientacion.HORIZONTAL ? i : 0);
+            
+            if (f < 0 || f >= 8 || c < 0 || c >= 8)
+                continue;
+            
+            if (!modelo[f][c].equals(Battleship.AGUA))
+                continue;
+            
+            grid[f][c].setBackground(ok ? UIColors.HOVER_OK.getColor() : UIColors.HOVER_BAD.getColor());
+            
+            if (CuentaPreview < PreviewCeldas.length) {
+                PreviewCeldas[CuentaPreview++] = new Point(f, c);
+            }
+        }
+    }
+    
+    private void LimpiarPreview() {
+        if (CuentaPreview == 0)
+            return;
+        
+        int jugador = JugadorColocando;
+        JButton[][] grid = (JugadorColocando == 1) ? BtnMiTablero : BtnTableroRival;
+        String[][] modelo = Juego.getTablero(jugador);
+
+        for (int i = 0; i < CuentaPreview; i++) {
+            Point punto = PreviewCeldas[i];
+            
+            if (punto == null)
+                continue;
+            
+            String var = modelo[punto.x][punto.y];
+            
+            //Restaurar segun lo que realmente hay en el tablero
+            if (var.equals(Battleship.AGUA)) {
+                grid[punto.x][punto.y].setText("");
+                grid[punto.x][punto.y].setBackground(jugador == 1 ? UIColors.AGUA_P1.getColor() : UIColors.AGUA_P2.getColor());
+            } else if (esCodigoBarco(var)) {
+                grid[punto.x][punto.y].setText(var);
+                grid[punto.x][punto.y].setForeground(Color.WHITE);
+                grid[punto.x][punto.y].setBackground(UIColors.BARCO.getColor());
+            } else if (var.equalsIgnoreCase("X")) {
+                grid[punto.x][punto.y].setText("X");
+                grid[punto.x][punto.y].setForeground(Color.WHITE);
+                grid[punto.x][punto.y].setBackground(UIColors.HIT.getColor());
+            } else if (var.equalsIgnoreCase("F")) {
+                grid[punto.x][punto.y].setText("F");
+                grid[punto.x][punto.y].setForeground(Color.WHITE);
+                grid[punto.x][punto.y].setBackground(UIColors.MISS.getColor());
+            } else {
+                grid[punto.x][punto.y].setText(var);
+            }
+            
+            grid[punto.x][punto.y].repaint();
+            PreviewCeldas[i] = null;
+        }
+        
+        CuentaPreview = 0;
+    }
+    
+    private int getLenBarco(String codigo) {
+        switch(codigo) {
+            case "PA":
+                return 5;
+            case "AZ":
+                return 4;
+            case "SM":
+                return 3;
+            case "DT":
+                return 2;
+        }
+        
+        return 2;
+    }
+    
+    private void RefrescarControlesPorFase() {
+        CBBarco.setEnabled(FaseColocacion);
+        BtnRotar.setEnabled(FaseColocacion);
+        BtnConfirmarColocacion.setEnabled(FaseColocacion);
+        BtnRetirar.setEnabled(!FaseColocacion);
     }
     
     private void HabilitarClickDisparo() {
@@ -336,43 +467,14 @@ public class PanelJuego extends JFrame {
     }
     
     private void setGridEnabled(JButton[][] grid, boolean habilitado) {
+        Cursor cursor = habilitado ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+        
         for (int fila = 0; fila < 8; fila++) {
             for (int col = 0; col < 8; col++) {
+                grid[fila][col].setCursor(cursor);
                 grid[fila][col].setEnabled(habilitado);
             }
         }
-    }
-    
-    private JButton[][] CrearGridBotones(JPanel contenedor, boolean esmitablero) {
-        contenedor.removeAll();
-        contenedor.setLayout(new GridLayout(8, 8, 2, 2));
-        
-        JButton[][] botones = new JButton[8][8];
-        
-        for (int fila = 0; fila < 8; fila++) {
-            for (int col = 0; col < 8; col++) {
-                JButton boton = new JButton();
-                boton.setFont(new Font("DIN Condensed", Font.BOLD, 14));
-                boton.setPreferredSize(new Dimension(60, 60));
-                boton.setBackground(new Color(30, 30, 55));
-                boton.setForeground(new Color(240, 240, 255));
-                boton.putClientProperty("fila", fila);
-                boton.putClientProperty("col", col);
-                
-                if (esmitablero) {
-                    boton.addActionListener(e -> onClickMiTablero(boton));
-                } else {
-                    boton.addActionListener(e -> onClickRival(boton));
-                }
-                
-                botones[fila][col] = boton;
-                contenedor.add(boton);
-            }
-        }
-        
-        contenedor.revalidate();
-        contenedor.repaint();
-        return botones;
     }
     
     private void onClickMiTablero(JButton boton) {
@@ -432,7 +534,7 @@ public class PanelJuego extends JFrame {
         Resultado resultado = Juego.Disparar(fila, col, false);
         
         if (resultado == Resultado.INVALIDO) {
-            JOptionPane.showMessageDialog(this, "Tiro invalid o repetido", "Aviso", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tiro invalido o repetido", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (resultado == Resultado.FUERA_RANGO) {
@@ -441,11 +543,22 @@ public class PanelJuego extends JFrame {
         }
         
         if (resultado == Resultado.MISS) {
-            JOptionPane.showMessageDialog(this, "Fallaste!", "Turno", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Fallaste!\nEl agua salpica...", "Fallo", JOptionPane.INFORMATION_MESSAGE);
         } else if (resultado == Resultado.HIT) {
-            JOptionPane.showMessageDialog(this, "Impacto!!\nEl tablero del rival de regenera!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            String barcohundido = Juego.getUltimoBarcoHundido();
+            int jugadorafectado = Juego.getUltimoJugadorAfectado();
+            String nombrerival = (jugadorafectado == 1) ? Juego.getJugador1() : Juego.getJugador2();
+            
+            if (barcohundido != null && !barcohundido.isEmpty()) {
+                //Por si se hundio un barco entero
+                String nombrebarco = getNombreBarco(barcohundido);
+                JOptionPane.showMessageDialog(this, "BARCO HUNDIDO!!\n\n" + "Has destruido el " + nombrebarco + "\n" + "del jugador " + nombrerival + "!\n\n" + "El tablero del rival se regenera...", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "IMPACTO!!\nLe diste a un barco enemigo!\n\nEl tablero del rival se regenera...", "Golpe", JOptionPane.WARNING_MESSAGE);
+            }
+            
         } else if (resultado == Resultado.GANO) {
-            JOptionPane.showMessageDialog(this, "El jugador " + Juego.getJugadorTurno() + " ha ganado!\n(+3 puntos)", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "VICTORIA!!\n" + "El jugador " + Juego.getJugadorTurno() + " ha ganado la partida!\n\n(+3 puntos)", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
             Volver();
             return;
         } else if (resultado == Resultado.RETIRO) {
@@ -487,7 +600,7 @@ public class PanelJuego extends JFrame {
     private void onRotar() {
         orientacion = (orientacion == Orientacion.HORIZONTAL) ? Orientacion.VERTICAL : Orientacion.HORIZONTAL;
         BtnRotar.setText(orientacion == Orientacion.HORIZONTAL ? "Rotar (H)" : "Rotar (V)");
-        ActualizarLabels();
+        RenderizarTodo();
     }
     
     private void onConfirmarColocacion() {
@@ -505,14 +618,12 @@ public class PanelJuego extends JFrame {
         if (JugadorColocando == 1) {
             JugadorColocando = 2;
             LimpiarVistaTableros();
-//            ActualizarLabels();
             RenderizarTodo();
             return;
         }
         
         //Inicia el disparo
         FaseColocacion = false;
-//        ActualizarLabels();
         RefrescarControlesPorFase();
         RenderizarTodo();
     }
@@ -522,6 +633,8 @@ public class PanelJuego extends JFrame {
             for (int col = 0; col < 8; col++) {
                 BtnMiTablero[fila][col].setText("");
                 BtnTableroRival[fila][col].setText("");
+                BtnMiTablero[fila][col].setBackground(UIColors.AGUA_P1.getColor());
+                BtnTableroRival[fila][col].setBackground(UIColors.AGUA_P2.getColor());
             }
         }
     }
@@ -530,28 +643,75 @@ public class PanelJuego extends JFrame {
         for (int fila = 0; fila < 8; fila++) {
             for (int col = 0; col < 8; col++) {
                 vista[fila][col].setText("");
+                vista[fila][col].setBackground(vista == BtnMiTablero ? UIColors.AGUA_P1.getColor() : UIColors.AGUA_P2.getColor());
             }
         }
     }
     
-    private void RenderizarTablero(char[][] modelo, JButton[][] vista, boolean mostrarbarcos) {
+    private void RenderizarTablero(String[][] modelo, JButton[][] vista, boolean mostrarbarcos, boolean establerorival, boolean activo) {
         for (int fila = 0; fila < 8; fila++) {
             for (int col = 0; col < 8; col++) {
-                char var = modelo[fila][col];
+                String var = modelo[fila][col];
                 
-                if (!mostrarbarcos) {
-                    if (var == TipoBarco.PA.simbolo || var == TipoBarco.AZ.simbolo || var == TipoBarco.SM.simbolo || var == TipoBarco.DT.simbolo) {
-                        var = Battleship.AGUA;
-                    }
+                if (var == null) {
+                    var = Battleship.AGUA;
+                }
+                
+                if (!mostrarbarcos && esCodigoBarco(var)) {
+                    var = Battleship.AGUA;
                 }
                 
                 JButton boton = vista[fila][col];
+                boton.setOpaque(true);
+                boton.setContentAreaFilled(true);
+                boton.setBorderPainted(true);
+                boton.setFocusPainted(false);
                 
-                if (var == Battleship.AGUA) {
-                    boton.setText("");
+                Color aguacolor;
+                
+                if (establerorival) {
+                    aguacolor = activo ? UIColors.AGUA_P2.getColor() : UIColors.AGUA_P2_INACTIVO.getColor();
                 } else {
-                    boton.setText(String.valueOf(var));
+                    aguacolor = activo ? UIColors.AGUA_P1.getColor() : UIColors.AGUA_P1_INACTIVO.getColor();
+
                 }
+                
+                if (var.equals(Battleship.AGUA)) {
+                    boton.setText("");
+                    boton.setBackground(aguacolor);
+                    continue;
+                }
+                
+                if (esCodigoBarco(var)) {
+                    boton.setText(var);
+                    boton.setForeground(Color.WHITE);
+                    boton.setBackground(UIColors.BARCO.getColor());
+                    continue;
+                }
+                
+                if (var.equalsIgnoreCase("X")) {
+                    boton.setText("X");
+                    boton.setForeground(Color.WHITE);
+                    boton.setBackground(new Color(255, 80, 80, 170));
+                    continue;
+                }
+                
+                if (var.equalsIgnoreCase("F")) {
+                    boton.setText("F");
+                    boton.setForeground(Color.WHITE);
+                    boton.setBackground(new Color(200, 200, 200, 140));
+                    continue;
+                }
+                
+                boton.setText(var);
+                boton.setForeground(Color.WHITE);
+                boton.setBackground(new Color(80, 80, 120, 140));
+            }
+        }
+        
+        for (int fila = 0; fila < 8; fila++) {
+            for (int col = 0; col < 8; col++) {
+                vista[fila][col].repaint();
             }
         }
     }
@@ -607,6 +767,29 @@ public class PanelJuego extends JFrame {
         }
         
         return "Entrada invalida";
+    }
+    
+    private boolean esCodigoBarco(String label) {
+        if (label == null) {
+            return false;
+        }
+        
+        return label.equals(TipoBarco.PA.codigo) || label.equals(TipoBarco.AZ.codigo) || label.equals(TipoBarco.SM.codigo) || label.equals(TipoBarco.DT.codigo);
+    }
+    
+    private String getNombreBarco(String codigo) {
+        switch(codigo) {
+            case "PA":
+                return "PORTAAVIONES";
+            case "AZ":
+                return "ACORAZADO";
+            case "SM":
+                return "SUBMARINO";
+            case "DT":
+                return "DESTRUCTOR";
+            default:
+                return "BARCO";
+        }
     }
     
     private void EstilizarBoton(JComponent boton) {

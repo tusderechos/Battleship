@@ -17,7 +17,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.text.JTextComponent;
 
 public class MiPerfil extends JFrame {
     
@@ -101,20 +100,16 @@ public class MiPerfil extends JFrame {
         PanelInfo.setBackground(new Color(0, 0, 0, 130));
         PanelInfo.setOpaque(true);
         
-//        LblUsuario = new JLabel("Nombre de Usuario: ");
         LblUsuario = new JLabel("");
         EstilizarLabel(LblUsuario);
         
         LblPuntos = new JLabel("");
-//        LblPuntos = new JLabel("Puntaje: ");
         EstilizarLabel(LblPuntos);
         
         LblFechaIngreso = new JLabel("");
-//        LblFechaIngreso = new JLabel("Fecha de ingreso: ");
         EstilizarLabel(LblFechaIngreso);
         
         LblActivo = new JLabel("");
-//        LblActivo = new JLabel("Estado: ");
         EstilizarLabel(LblActivo);
         
         /*
@@ -164,163 +159,36 @@ public class MiPerfil extends JFrame {
     }
     
     private void ModificarMisDatos() {
-        int indice = Memoria.getIndiceUsuario(UsuarioActivo);
+        new ModificarDatos(this, Memoria, UsuarioActivo, menuPrincipal).setVisible(true);
+        RefrescarDatos();
+    }
+    
+    private void RefrescarDatos() {
+        String usuario = menuPrincipal.getUsuarioActivo();
+        
+        if (usuario == null || usuario.isBlank()) {
+            JOptionPane.showMessageDialog(this, "No hay un usuario activo", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int indice = Memoria.getIndiceUsuario(usuario);
         
         if (indice == -1) {
-            JOptionPane.showMessageDialog(this, "Usuario no encontrado o inactivo", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Ese usuario no se encuentra", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        String[] opciones = {"Cambiar Username", "Cambiar Contraseña", "Volver"};
+        int puntos = Memoria.getPuntos(indice);
+        String fecha = Memoria.getFechaIngresoFormat(indice, "dd/MM/yyyy HH:mm");
+        boolean activo = Memoria.isActivo(indice);
         
-        int opcion = JOptionPane.showOptionDialog(this, "Elige el dato que quieras modificar", "Modificar Datos", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
+        LblUsuario.setText("Usuario: " + usuario);
+        LblPuntos.setText("Puntos: " + puntos);
+        LblFechaIngreso.setText("Fecha de ingreso: " + fecha);
+        LblActivo.setText("Estado: " + (activo ? "ACTIVO" : "INACTIVO"));
         
-        if (opcion == 0) {
-            CambiarUsername(indice);
-            VerMisDatos();
-        } else if (opcion == 1) {
-            CambiarContrasena(indice);
-            VerMisDatos();
-        }
-    }
-    
-    private void CambiarUsername(int indice) {
-        String nuevouser = JOptionPane.showInputDialog(this, "Ingresa el nuevo nombre de usuario");
-        
-        if (nuevouser == null)
-            return;
-        
-        nuevouser = nuevouser.trim();
-        
-        if (nuevouser.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "el nuevo usuario no puede estar vacio", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        boolean actualizado = Memoria.ActualizarUsuario(indice, nuevouser);
-        
-        if (!actualizado) {
-            JOptionPane.showMessageDialog(this, "El usuario ya existe o no se pudo cambiar", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        UsuarioActivo = nuevouser;
-        
-        if (menuPrincipal != null) {
-            menuPrincipal.setUsuarioActivo(nuevouser);
-        }
-    }
-    
-    private void CambiarContrasena(int indice) {
-        JPasswordField passactual = new JPasswordField();
-        EstilizarCampoTexto(passactual);
-        JPasswordField passnueva = new JPasswordField();
-        EstilizarCampoTexto(passnueva);
-        JPasswordField passconfirm = new JPasswordField();
-        EstilizarCampoTexto(passconfirm);
-        
-        ImageIcon IconoFondo = new ImageIcon(getClass().getResource("/images/bg_modificardatos.PNG"));
-        Image ImagenFondo = IconoFondo.getImage();
-        
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(ImagenFondo, 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-        panel.setLayout(new GridLayout());
-        panel.setOpaque(true);
-        
-        JPanel card = new RoundedPanel(20, new Color(0, 0, 0, 170));
-        card.setLayout(new GridBagLayout());
-        card.setBorder(BorderFactory.createEmptyBorder(16, 18, 16, 18));
-        card.setOpaque(false);
-        
-        JLabel titulo = new JLabel("CAMBIAR CONTRASEÑA");
-        titulo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
-        titulo.setForeground(Color.WHITE);
-        
-        JLabel lblcontactual = new JLabel("Contraseña actual: ");
-        EstilizarLabel(lblcontactual);
-        JLabel lblcontnueva = new JLabel("Contraseña nueva: ");
-        EstilizarLabel(lblcontnueva);
-        JLabel lblcontconfir = new JLabel("Confirmar contraseña nueva: ");
-        EstilizarLabel(lblcontconfir);
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 0, 12, 0);
-        card.add(titulo, gbc);
-        
-        gbc.gridwidth = 1;
-        gbc.gridy++;
-        gbc.insets = new Insets(6, 0, 4, 10);
-        card.add(lblcontactual, gbc);
-        
-        gbc.gridx = 1;
-        gbc.insets = new Insets(6, 0, 4, 0);
-        card.add(passactual, gbc);
-        
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = new Insets(10, 0, 4, 10);
-        card.add(lblcontnueva, gbc);
-        
-        gbc.gridx = 1;
-        gbc.insets = new Insets(10, 0, 4, 0);
-        card.add(passnueva, gbc);
-        
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = new Insets(10, 0, 4, 10);
-        card.add(lblcontconfir, gbc);
-        
-        gbc.gridx = 1;
-        gbc.insets = new Insets(10, 0, 4, 0);
-        card.add(passconfirm, gbc);
-        
-        GridBagConstraints bgc = new GridBagConstraints();
-        bgc.insets = new Insets(20, 20, 20, 20);
-        bgc.fill = GridBagConstraints.NONE;
-        
-        panel.add(card, bgc);
-        
-        Object[] opciones = {"GUARDAR", "CANCELAR"};
-        int respuesta = JOptionPane.showOptionDialog(this, panel, "Cambiar Contraseña", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, opciones, opciones[0]);
-
-        if (respuesta != 0)
-            return;
-        
-        String actual = new String(passactual.getPassword()).trim();
-        String nueva = new String(passnueva.getPassword()).trim();
-        String confirm = new String(passconfirm.getPassword()).trim();
-        
-        if (actual.isEmpty() || nueva.isEmpty() || confirm.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No se puede dejar campos vacios", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        if (!nueva.equals(confirm)) {
-            JOptionPane.showMessageDialog(this, "La nueva contraseña no coincide", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        if (!Memoria.ValidarContrasenaActual(indice, actual)) {
-            JOptionPane.showMessageDialog(this, "Contraseña actual incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        boolean actualizado = Memoria.ActualizarContrasena(indice, nueva);
-        
-        if (actualizado) {
-            JOptionPane.showMessageDialog(this, "Contraseña actualizada", "Exito", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "No se pudo actualizar la contraseña", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        repaint();
+        revalidate();
     }
     
     private void Volver() {
@@ -374,29 +242,5 @@ public class MiPerfil extends JFrame {
         label.setOpaque(true);
         label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
-    }
-    
-    private void EstilizarCampoTexto(JTextComponent campo) {
-        campo.setFont(new Font("DIN Condensed", Font.BOLD, 18));
-        campo.setBackground(new Color(25, 25, 25));
-        campo.setForeground(Color.WHITE);
-        campo.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(0, 0, 120), 2), BorderFactory.createEmptyBorder(5, 20, 5, 20)));
-        campo.setOpaque(true);
-        campo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        campo.setPreferredSize(new Dimension(220, 44));
-        
-        campo.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                campo.setBackground(new Color(60, 0, 0));
-                campo.setForeground(new Color(255, 220, 130));
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                campo.setBackground(new Color(25, 25, 25));
-                campo.setForeground(Color.WHITE);
-            }
-        });
     }
 }

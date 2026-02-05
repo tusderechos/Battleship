@@ -9,18 +9,16 @@ package enums;
  * @author USUARIO
  */
 public enum TipoBarco {
-    PA("PA", 'P', 5),
-    AZ("AZ", 'A', 4),
-    SM("SM", 'S', 3),
-    DT("DT", 'D', 2);
+    PA("PA", 5),
+    AZ("AZ", 4),
+    SM("SM", 3),
+    DT("DT", 2);
     
     public final String codigo;
-    public final char simbolo;
     public final int longitud;
     
-    TipoBarco(String codigo, char simbolo, int longitud) {
+    TipoBarco(String codigo, int longitud) {
         this.codigo = codigo;
-        this.simbolo = simbolo;
         this.longitud = longitud;
     }
     
