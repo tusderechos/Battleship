@@ -19,6 +19,7 @@ public enum UIColors {
     AGUA_P2(55, 25, 25),
     AGUA_P2_INACTIVO(38, 17, 17),
     BARCO(186, 182, 182),
+    BARCO_INACTIVO(140, 137, 137),
     HOVER_OK(60, 90, 150),
     HOVER_BAD(140, 60, 60),
     DESHABILITADO(18, 18, 30),

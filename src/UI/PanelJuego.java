@@ -15,6 +15,7 @@ import LogicaJuego.Battleship;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -56,6 +57,8 @@ public class PanelJuego extends JFrame {
     private final Point[] PreviewCeldas = new Point[5];
     private int CuentaPreview = 0;
     
+    private boolean InicializacionExitosa = false;
+    
     public PanelJuego(MemoriaCuentas Memoria, String UsuarioActivo, MenuPrincipal menuPrincipal, Dificultad dificultad, ModoJuego Modo) {
         this.Memoria = Memoria;
         this.UsuarioActivo = (UsuarioActivo == null) ? "" : UsuarioActivo.trim();
@@ -64,8 +67,8 @@ public class PanelJuego extends JFrame {
         this.Modo = (Modo == null) ? ModoJuego.TUTORIAL : Modo;
         
         if (this.UsuarioActivo.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Primero inicia sesion", "Aviso", JOptionPane.WARNING_MESSAGE);
-            dispose();
+            MostrarMensaje("Primero inicia sesion", "Aviso", JOptionPane.WARNING_MESSAGE);
+//            dispose();
             return;
         }
         
@@ -74,21 +77,21 @@ public class PanelJuego extends JFrame {
         String jugador2 = PedirJugador2();
         
         if (jugador2 == null) {
-            dispose();
-            
-            if (menuPrincipal != null)
-                menuPrincipal.setVisible(true);
-            
+//            dispose();
+//            
+//            if (menuPrincipal != null)
+//                menuPrincipal.setVisible(true);
+//            
             return;
         }
                 
         if (!Juego.IniciarPartida(this.UsuarioActivo, jugador2)) {
-            JOptionPane.showMessageDialog(null, "No se pudo iniciar la partida", "Error", JOptionPane.ERROR_MESSAGE);
-            dispose();
-            
-            if (menuPrincipal != null)
-                menuPrincipal.setVisible(true);
-            
+            MostrarMensaje("No se pudo iniciar la partida", "Error", JOptionPane.ERROR_MESSAGE);
+//            dispose();
+//            
+//            if (menuPrincipal != null)
+//                menuPrincipal.setVisible(true);
+//            
             return;
         }
         
@@ -181,7 +184,7 @@ public class PanelJuego extends JFrame {
 
         CBBarco = new JComboBox<>(new String[]{"PA", "AZ", "SM", "DT"});
         EstilizarBoton(CBBarco);
-        CBBarco.setPreferredSize(new Dimension(90, 30));
+        CBBarco.setPreferredSize(new Dimension(90, 45));
         
         BtnRotar = new JButton("ROTAR (H)");
         EstilizarBoton(BtnRotar);
@@ -207,6 +210,8 @@ public class PanelJuego extends JFrame {
         //Ajuste inicial de botones segun fase
         RefrescarControlesPorFase();
         RenderizarTodo();
+        
+        InicializacionExitosa = true;
     }
     
     private JPanel CrearPanelTablero(boolean esmitablero) {
@@ -287,7 +292,7 @@ public class PanelJuego extends JFrame {
         LblEstado.setText("Dificultad: " + dificultad + " (" + dificultad.getBarcos() + " barcos)  |  Modo: " + Modo);
         
         if (FaseColocacion) {
-            LblColocando.setText("Colocacion: Jugador " + JugadorColocando + " (" + (JugadorColocando == 1 ? Juego.getJugador1() : Juego.getJugador2()) + ")");
+            LblColocando.setText("Fase de Colocacion: Jugador " + JugadorColocando + " (" + (JugadorColocando == 1 ? Juego.getJugador1() : Juego.getJugador2()) + ")");
             LblSeleccion.setText("Seleccionado: " + CBBarco.getSelectedItem() + " | Orientacion: " + orientacion);
         } else {
             LblColocando.setText("Turno de: " + Juego.getJugadorTurno());
@@ -489,7 +494,7 @@ public class PanelJuego extends JFrame {
             Resultado resultado = Juego.ColocarBarco(1, codigo, fila, col, orientacion);
 
             if (resultado != Resultado.OK) {
-                JOptionPane.showMessageDialog(this, ColocarMensaje(resultado), "Aviso", JOptionPane.WARNING_MESSAGE);
+                MostrarMensaje(ColocarMensaje(resultado), "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -516,7 +521,7 @@ public class PanelJuego extends JFrame {
             Resultado resultado = Juego.ColocarBarco(2, codigo, fila, col, orientacion);
 
             if (resultado != Resultado.OK) {
-                JOptionPane.showMessageDialog(this, ColocarMensaje(resultado), "Aviso", JOptionPane.WARNING_MESSAGE);
+                MostrarMensaje(ColocarMensaje(resultado), "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -534,35 +539,34 @@ public class PanelJuego extends JFrame {
         Resultado resultado = Juego.Disparar(fila, col, false);
         
         if (resultado == Resultado.INVALIDO) {
-            JOptionPane.showMessageDialog(this, "Tiro invalido o repetido", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Tiro invalido o repetido", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (resultado == Resultado.FUERA_RANGO) {
-            JOptionPane.showMessageDialog(this, "Fuera del tablero", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Fuera del tablero", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (resultado == Resultado.MISS) {
-            JOptionPane.showMessageDialog(this, "Fallaste!\nEl agua salpica...", "Fallo", JOptionPane.INFORMATION_MESSAGE);
+            MostrarMensaje("Fallaste!\nEl agua salpica...", "Fallo", JOptionPane.INFORMATION_MESSAGE);
         } else if (resultado == Resultado.HIT) {
             String barcohundido = Juego.getUltimoBarcoHundido();
             int jugadorafectado = Juego.getUltimoJugadorAfectado();
             String nombrerival = (jugadorafectado == 1) ? Juego.getJugador1() : Juego.getJugador2();
             
             if (barcohundido != null && !barcohundido.isEmpty()) {
-                //Por si se hundio un barco entero
                 String nombrebarco = getNombreBarco(barcohundido);
-                JOptionPane.showMessageDialog(this, "BARCO HUNDIDO!!\n\n" + "Has destruido el " + nombrebarco + "\n" + "del jugador " + nombrerival + "!\n\n" + "El tablero del rival se regenera...", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                MostrarMensaje("BARCO HUNDIDO!!\n\n" + "Has destruido el " + nombrebarco + "\n" + "del jugador " + nombrerival + "!\n\n" + "El tablero del rival se regenera...", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "IMPACTO!!\nLe diste a un barco enemigo!\n\nEl tablero del rival se regenera...", "Golpe", JOptionPane.WARNING_MESSAGE);
+                MostrarMensaje("IMPACTO!!\nLe diste a un barco enemigo!\n\nEl tablero del rival se regenera...", "Golpe", JOptionPane.WARNING_MESSAGE);
             }
             
         } else if (resultado == Resultado.GANO) {
-            JOptionPane.showMessageDialog(this, "VICTORIA!!\n" + "El jugador " + Juego.getJugadorTurno() + " ha ganado la partida!\n\n(+3 puntos)", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
+            MostrarMensaje("VICTORIA!!\n" + "El jugador " + Juego.getJugadorTurno() + " ha ganado la partida!\n\n(+3 puntos)", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
             Volver();
             return;
         } else if (resultado == Resultado.RETIRO) {
-            JOptionPane.showMessageDialog(this, "Retiro del jugador " + Juego.getJugadorTurno() + " confirmado", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
+            MostrarMensaje("Retiro del jugador " + Juego.getJugadorTurno() + " confirmado", "Fin de Partida", JOptionPane.INFORMATION_MESSAGE);
             Volver();
             return;
         }
@@ -572,11 +576,11 @@ public class PanelJuego extends JFrame {
     
     private void onRetirar() {
         if (FaseColocacion) {
-            JOptionPane.showMessageDialog(this, "Solo te puedes retirar durante la partida", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Solo te puedes retirar durante la partida", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        int opcion = JOptionPane.showConfirmDialog(this, "Seguro que quieres retirarte?\nTu rival ganara", "Retiro", JOptionPane.YES_NO_OPTION);
+        int opcion = MostrarConfirmacion("Seguro que quieres retirarte?\nTu rival ganara", "Retiro");
         
         if (opcion != JOptionPane.YES_OPTION)
             return;
@@ -584,7 +588,7 @@ public class PanelJuego extends JFrame {
         Resultado resultado = Juego.Disparar(-1, -1, true);
         
         if (resultado == Resultado.RETIRO) {
-            JOptionPane.showMessageDialog(this, "Retiro Confirmado", "Fin Partida", JOptionPane.INFORMATION_MESSAGE);
+            MostrarMensaje("Retiro del jugador: " + Juego.getJugadorTurno() + "\nHa sido Confirmado" + "\nHa ganado el jugador " + Juego.getOtroJugador() + "!" + "\n\n(+3 puntos)", "Fin Partida", JOptionPane.INFORMATION_MESSAGE);
             Volver();
         }
     }
@@ -611,7 +615,7 @@ public class PanelJuego extends JFrame {
         int colocados = Juego.getColocados(JugadorColocando);
         
         if (colocados < max) {
-            JOptionPane.showMessageDialog(this, "Te faltan barcos: " + colocados + "/" + max, "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Te faltan barcos: " + colocados + "/" + max, "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -685,7 +689,7 @@ public class PanelJuego extends JFrame {
                 if (esCodigoBarco(var)) {
                     boton.setText(var);
                     boton.setForeground(Color.WHITE);
-                    boton.setBackground(UIColors.BARCO.getColor());
+                    boton.setBackground(activo ? UIColors.BARCO.getColor() : UIColors.BARCO_INACTIVO.getColor());
                     continue;
                 }
                 
@@ -718,7 +722,7 @@ public class PanelJuego extends JFrame {
     
     private String PedirJugador2() {
         while (true) {
-            String jugador2 = JOptionPane.showInputDialog(null, "Ingresa el username del JUGADOR 2 (o escribe EXIT para cancelar): ", "Player 2", JOptionPane.QUESTION_MESSAGE);
+            String jugador2 = MostrarInput("Ingresa el username del JUGADOR 2 (o escribe EXIT para cancelar): ", "Player 2");
             
             if (jugador2 == null) {
                 return null;
@@ -732,23 +736,23 @@ public class PanelJuego extends JFrame {
             if (jugador2.isEmpty()) {
                 continue;
             }
-            if (jugador2.equalsIgnoreCase(UsuarioActivo)) {
-                JOptionPane.showMessageDialog(null, "El jugador 2 no puede ser el mismo que el jugador 1", "Aviso", JOptionPane.WARNING_MESSAGE);
+            if (jugador2.equals(UsuarioActivo)) {
+                MostrarMensaje("El jugador 2 no puede ser el mismo que el jugador 1", "Aviso", JOptionPane.WARNING_MESSAGE);
                 continue;
             }
             
-            int indice = Memoria.getIndiceUsuario(jugador2);
+            int indice = Memoria.getIndiceUsuarioExacto(jugador2);
             
             if (indice == -1) {
-                JOptionPane.showMessageDialog(null, "Ese usuario no existe, intentalo otra vez", "Aviso", JOptionPane.WARNING_MESSAGE);
+                MostrarMensaje("Ese usuario no existe, intentalo otra vez", "Aviso", JOptionPane.WARNING_MESSAGE);
                 continue;
             }
             if (!Memoria.isActivo(indice)) {
-                JOptionPane.showMessageDialog(null, "Ese usuario esta inactivo", "Aviso", JOptionPane.WARNING_MESSAGE);
+                MostrarMensaje("Ese usuario esta inactivo", "Aviso", JOptionPane.WARNING_MESSAGE);
                 continue;
             }
             
-            return jugador2;
+            return Memoria.getUsuario(indice);
         }
     }
     
@@ -790,6 +794,202 @@ public class PanelJuego extends JFrame {
             default:
                 return "BARCO";
         }
+    }
+    
+    public boolean isInicializacionExitosa() {
+        return InicializacionExitosa;
+    }
+    
+    private void MostrarMensaje(String mensaje, String titulo, int tipo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        JOptionPane.showMessageDialog(this, panel, titulo, tipo);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+    }
+    
+    private int MostrarConfirmacion(String mensaje, String titulo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        int resultado = JOptionPane.showConfirmDialog(this, panel, titulo, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+        
+        return resultado;
+    }
+    
+//    private String MostrarInput(String mensaje, String titulo, String valorinicial) {
+//        JPanel panel = new JPanel();
+//        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+//        panel.setBackground(new Color(20, 20, 35));
+//        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+//
+//        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 280px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+//        lblmensaje.setForeground(Color.WHITE);
+//        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+//        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+//
+//        JTextField txtinput = new JTextField(valorinicial != null ? valorinicial : "");
+//        txtinput.setMaximumSize(new Dimension(280, 35));
+//        txtinput.setPreferredSize(new Dimension(280, 35));
+//        txtinput.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+//        txtinput.setBackground(new Color(40, 40, 60));
+//        txtinput.setForeground(Color.WHITE);
+//        txtinput.setCaretColor(Color.WHITE);
+//        txtinput.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(80, 120, 160), 2), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+//        txtinput.setAlignmentX(Component.CENTER_ALIGNMENT);
+//
+//        panel.add(lblmensaje);
+//        panel.add(Box.createVerticalStrut(15));
+//        panel.add(txtinput);
+//        
+//        JButton BtnOk = new JButton("OK");
+//        JButton BtnCancelar = new JButton("CANCELAR");
+//        EstilizarBoton(BtnOk);
+//        EstilizarBoton(BtnCancelar);
+//        
+//        final String[] resultado = {null};
+//        
+//        BtnOk.addActionListener(e -> {
+//            resultado[0] = txtinput.getText();
+//        });
+//        BtnCancelar.addActionListener(e -> {
+//            resultado[0] = null;
+//        });
+//        
+//        JOptionPane opcion = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, new Object[]{BtnOk, BtnCancelar}, BtnOk);
+//        opcion.setBackground(new Color(20, 20, 35));
+//        
+//        JDialog dialogo = opcion.createDialog(this, titulo);
+//        dialogo.setModal(true);
+//        
+//        dialogo.getContentPane().setBackground(new Color(20, 20, 35));
+//        
+//        txtinput.addActionListener(e -> {
+//            BtnOk.doClick();
+//            dialogo.dispose();
+//        });
+//        
+//        BtnOk.addActionListener(e -> {
+//            resultado[0] = txtinput.getText();
+//            dialogo.dispose();
+//        });
+//        BtnCancelar.addActionListener(e -> {
+//            resultado[0] = null;
+//            dialogo.dispose();
+//        });
+//        
+//        dialogo.getRootPane().setDefaultButton(BtnOk);
+//        dialogo.getRootPane().registerKeyboardAction(e -> {
+//            resultado[0] = null;
+//            dialogo.dispose();
+//        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+//        
+//        dialogo.pack();
+//        dialogo.setResizable(false);
+//        dialogo.setLocationRelativeTo(this);
+//        
+//        SwingUtilities.invokeLater(() -> txtinput.requestFocusInWindow());
+//        dialogo.setVisible(true);
+//        
+//        return resultado[0];
+//    }
+
+    private String MostrarInput(String mensaje, String titulo, String valorinicial) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 280px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        panel.add(lblmensaje);
+        panel.add(Box.createVerticalStrut(15));
+
+        JTextField txtinput = new JTextField(valorinicial != null ? valorinicial : "");
+        txtinput.setMaximumSize(new Dimension(280, 35));
+        txtinput.setPreferredSize(new Dimension(280, 35));
+        txtinput.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        txtinput.setBackground(new Color(40, 40, 60));
+        txtinput.setForeground(Color.WHITE);
+        txtinput.setCaretColor(Color.WHITE);
+        txtinput.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(80, 120, 160), 2), BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+        txtinput.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        panel.add(txtinput);
+
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.font", new Font("DIN Condensed", Font.BOLD, 14));
+
+        int resultado = JOptionPane.showConfirmDialog(this, panel, titulo, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.font", null);
+
+        if (resultado == JOptionPane.OK_OPTION) {
+            return txtinput.getText();
+        }
+
+        return null;
+    }
+    
+    private String MostrarInput(String mensaje, String titulo) {
+        return MostrarInput(mensaje, titulo, "");
     }
     
     private void EstilizarBoton(JComponent boton) {

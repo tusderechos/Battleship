@@ -227,7 +227,7 @@ public class Reportes extends JFrame {
         PanelBotones.setLayout(new BoxLayout(PanelBotones, BoxLayout.X_AXIS));
         PanelBotones.setOpaque(false);
         
-        BtnRefrescar = new JButton("REFRESCAR");
+        BtnRefrescar = new JButton("MOSTRAR LOGS");
         EstilizarBoton(BtnRefrescar);
         BtnRefrescar.addActionListener(e -> {
             MostrarRanking();

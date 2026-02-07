@@ -94,7 +94,7 @@ public class MenuInicial extends JFrame {
     
     public void onLoginExitoso(String usuario) {
         if (usuario == null || usuario.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Usuario Invalido", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("Usuario Invalido", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -103,7 +103,7 @@ public class MenuInicial extends JFrame {
     }
     
     private void onSalir() {
-        int Opcion = JOptionPane.showConfirmDialog(this, "Estas seguro que quieres salir?", "Confirmacion", JOptionPane.YES_NO_OPTION);
+        int Opcion = MostrarConfirmacion("Estas seguro que quieres salir?", "Confirmacion");
         
         if (Opcion == JOptionPane.YES_OPTION) {
             System.exit(0);
@@ -133,5 +133,67 @@ public class MenuInicial extends JFrame {
                 boton.setForeground(new Color(220, 180, 80));
             }
         });
+    }
+    
+    private void MostrarMensaje(String mensaje, String titulo, int tipo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        JOptionPane.showMessageDialog(this, panel, titulo, tipo);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+    }
+    
+    private int MostrarConfirmacion(String mensaje, String titulo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        int resultado = JOptionPane.showConfirmDialog(this, panel, titulo, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+        
+        return resultado;
     }
 }

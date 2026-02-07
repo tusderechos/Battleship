@@ -216,7 +216,7 @@ public class ModificarDatos extends JDialog {
             menuPrincipal.setUsuarioActivo(nuevousuario);
         }
         
-        JOptionPane.showMessageDialog(this, "Datos actualizados correctamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
+        MostrarMensaje("Datos actualizados correctamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
         dispose();
     }
     
@@ -280,5 +280,35 @@ public class ModificarDatos extends JDialog {
         label.setBackground(new Color(0, 0, 0, 180));
         label.setOpaque(true);
         label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
+    }
+    
+    private void MostrarMensaje(String mensaje, String titulo, int tipo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        JOptionPane.showMessageDialog(this, panel, titulo, tipo);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
     }
 }

@@ -44,7 +44,7 @@ public class MenuPrincipal extends JFrame {
         this.UsuarioActivo = (UsuarioActivo == null) ? "" : UsuarioActivo.trim();
         
         if (this.UsuarioActivo.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Inicia sesion o crea una cuenta!", "Error", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Inicia sesion o crea una cuenta!", "Error", JOptionPane.WARNING_MESSAGE);
             dispose();
             
             new MenuInicial().setVisible(true);
@@ -168,14 +168,14 @@ public class MenuPrincipal extends JFrame {
     
     private void onJugar() {
         if (UsuarioActivo == null || UsuarioActivo.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         String[] activos = (Memoria != null) ? Memoria.getUsuariosActivos(): new String[0];
         
         if (activos.length < 2) {
-            JOptionPane.showMessageDialog(this, "Necesitas como minimo 2 jugadores para poder iniciar el juego!", "Insuficientes Jugadores", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Necesitas como minimo 2 jugadores para poder iniciar el juego!", "Insuficientes Jugadores", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -187,61 +187,33 @@ public class MenuPrincipal extends JFrame {
         }
         
         if (cuenta == 0) {
-            JOptionPane.showMessageDialog(this, "No hay oponentes conectados actualmente", "Sin Rivales", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("No hay oponentes conectados actualmente", "Sin Rivales", JOptionPane.WARNING_MESSAGE);
             return;
         }
-//        
-//        //Arreglo con rivales
-//        String[] rivales = new String[cuenta];
-//        int k = 0;
-//        
-//        for (int i = 0; i < activos.length; i++) {
-//            if (activos[i] != null && !activos[i].equalsIgnoreCase(UsuarioActivo)) {
-//                rivales[k++] = activos[i];
-//            }
-//        }
-//        
-//        JLabel LblBlancas = new JLabel("BLANCAS: " + UsuarioActivo);
-//        
-//        JComboBox<String> CmbNegras = new JComboBox<>(rivales);
-//        
-//        JPanel panel = new JPanel();
-//        panel.setLayout(new GridLayout(0, 1, 6, 6));
-//        
-//        panel.add(new JLabel("Jugador BLANCAS: "));
-//        panel.add(LblBlancas);
-//        panel.add(new JLabel("Jugador (Elige oponente): "));
-//        panel.add(CmbNegras);
-//        
-//        int eleccion = JOptionPane.showConfirmDialog(this, panel, "Elegir Oponente", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-//        
-//        if (eleccion != JOptionPane.OK_OPTION) {
-//            return;
-//        }
-//        
-//        String negras = (String) CmbNegras.getSelectedItem();
-//        
-//        if (negras == null || negras.isBlank()) {
-//            JOptionPane.showMessageDialog(this, "Debes seleccionar un oponente!", "Aviso", JOptionPane.WARNING_MESSAGE);
-//            return;
-//        }
-//        
+
         PanelJuego juego = new PanelJuego(Memoria, UsuarioActivo, this, getDificultadActual(), getModoJuegoActual());
-        this.setVisible(false);
-        
-        juego.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                MenuPrincipal.this.setVisible(true);
-            }
-        });
-        
-        juego.setVisible(true);
+//        this.setVisible(false);
+//        
+//        juego.addWindowListener(new WindowAdapter() {
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//                MenuPrincipal.this.setVisible(true);
+//            }
+//        });
+//        
+//        juego.setVisible(true);
+
+        if (juego.isInicializacionExitosa()) {
+            juego.setVisible(true);
+            setVisible(false);
+        } else {
+            juego.dispose();
+        }
     }
     
     private void AbrirConfiguracion() {
         if (UsuarioActivo == null || UsuarioActivo.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -250,7 +222,7 @@ public class MenuPrincipal extends JFrame {
     }
     private void AbrirMiCuenta() {
         if (UsuarioActivo == null || UsuarioActivo.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -260,7 +232,7 @@ public class MenuPrincipal extends JFrame {
     
     private void AbrirReportes() {
         if (UsuarioActivo == null || UsuarioActivo.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -269,7 +241,7 @@ public class MenuPrincipal extends JFrame {
     }
     
     private void onLogout() {
-        int opcion = JOptionPane.showConfirmDialog(this, "Estas seguro que quieres regresar al menu inicial?", "Aviso", JOptionPane.YES_NO_OPTION);
+        int opcion = MostrarConfirmacion("Estas seguro que quieres regresar al menu inicial?", "Aviso");
         
         if (opcion == JOptionPane.YES_OPTION) {
             dispose();
@@ -338,5 +310,67 @@ public class MenuPrincipal extends JFrame {
 
     public ModoJuego getModoJuegoActual() {
         return ModoJuegoActual;
+    }
+    
+    private void MostrarMensaje(String mensaje, String titulo, int tipo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        JOptionPane.showMessageDialog(this, panel, titulo, tipo);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+    }
+    
+    private int MostrarConfirmacion(String mensaje, String titulo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        int resultado = JOptionPane.showConfirmDialog(this, panel, titulo, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+        
+        return resultado;
     }
 }

@@ -54,6 +54,16 @@ public class MemoriaCuentas implements Datos {
         return -1;
     }
     
+    public int getIndiceUsuarioExacto(String usuario) {
+        for (int i = 0; i < Registrados; i++) {
+            if (Jugadores[i].getUsername().equals(usuario)) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+    
     @Override
     public void AgregarLog(String actor, String fecha, String rival, String resultado) {
         int indice = getIndiceUsuario(actor);

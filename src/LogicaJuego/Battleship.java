@@ -345,6 +345,14 @@ public class Battleship {
             return Jugador2;
         }
     }
+    
+    public String getOtroJugador() {
+        if (Turno == 1) {
+            return Jugador2;
+        } else {
+            return Jugador1;
+        }
+    }
 
     public int getColocados1() {
         return Colocados1;

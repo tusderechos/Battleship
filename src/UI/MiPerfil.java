@@ -111,11 +111,6 @@ public class MiPerfil extends JFrame {
         
         LblActivo = new JLabel("");
         EstilizarLabel(LblActivo);
-        
-        /*
-            Lo que tiene que ver con mostrar los datos del usuario solamente es un tipo de placeholder
-            hasta que lo arregle (posiblemente hoy o manana), asi que nadie se vaya a asustar
-        */
 
         PanelInfo.add(Box.createVerticalStrut(10));
         PanelInfo.add(LblUsuario);
@@ -141,14 +136,14 @@ public class MiPerfil extends JFrame {
         int indice = Memoria.getIndiceUsuario(UsuarioActivo);
         
         if (indice == -1) {
-            JOptionPane.showMessageDialog(this, "Usuario no encontrado o inactivo", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("Usuario no encontrado o inactivo", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         Player jugador = Memoria.getPlayer(indice);
         
         if (jugador == null) {
-            JOptionPane.showMessageDialog(this, "No se pudo cargar el perfil del usuario", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("No se pudo cargar el perfil del usuario", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -167,14 +162,14 @@ public class MiPerfil extends JFrame {
         String usuario = menuPrincipal.getUsuarioActivo();
         
         if (usuario == null || usuario.isBlank()) {
-            JOptionPane.showMessageDialog(this, "No hay un usuario activo", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("No hay un usuario activo", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         int indice = Memoria.getIndiceUsuario(usuario);
         
         if (indice == -1) {
-            JOptionPane.showMessageDialog(this, "Ese usuario no se encuentra", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Ese usuario no se encuentra", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -242,5 +237,35 @@ public class MiPerfil extends JFrame {
         label.setOpaque(true);
         label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
+    }
+    
+    private void MostrarMensaje(String mensaje, String titulo, int tipo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        JOptionPane.showMessageDialog(this, panel, titulo, tipo);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
     }
 }

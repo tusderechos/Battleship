@@ -186,27 +186,27 @@ public class CrearCuenta extends JDialog {
         String confirmarcontra = new String(PassConfirmarContra.getPassword());
         
         if (usuario.isEmpty() || contrasena.isEmpty() || confirmarcontra.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingrese algun dato", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("Ingrese algun dato", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         for (int i = 0; i < usuario.length(); i++) {
             if (Character.isWhitespace(usuario.charAt(i))) {
-                JOptionPane.showMessageDialog(this, "El usuario no puede contener espacios", "Error", JOptionPane.ERROR_MESSAGE);
+                MostrarMensaje("El usuario no puede contener espacios", "Error", JOptionPane.ERROR_MESSAGE);
                 TxtUsuario.requestFocus();
                 return;
             }
         }
         
         if (contrasena.length() != 5 || confirmarcontra.length() != 5) {
-            JOptionPane.showMessageDialog(this, "La contraseña debe tener exactamente 5 caracteres", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("La contraseña debe tener exactamente 5 caracteres", "Error", JOptionPane.ERROR_MESSAGE);
             PassContrasena.requestFocus();
             return;
         }
         
         for (int i = 0; i < contrasena.length(); i++) {
             if (Character.isWhitespace(contrasena.charAt(i))) {
-                JOptionPane.showMessageDialog(this, "La contraseña no puede contener espacios", "Error", JOptionPane.ERROR_MESSAGE);
+                MostrarMensaje("La contraseña no puede contener espacios", "Error", JOptionPane.ERROR_MESSAGE);
                 PassContrasena.requestFocus();
                 return;
             }
@@ -222,7 +222,7 @@ public class CrearCuenta extends JDialog {
         }
         
         if (!tienemayuscula) {
-            JOptionPane.showMessageDialog(this, "La contraseña debe tener al menos una letra mayuscula", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("La contraseña debe tener al menos una letra mayuscula", "Error", JOptionPane.ERROR_MESSAGE);
             PassContrasena.requestFocus();
             return;
         }
@@ -238,32 +238,32 @@ public class CrearCuenta extends JDialog {
         }
             
         if (!TieneSimbolo) {
-            JOptionPane.showMessageDialog(this, "La contraseña tiene que tener como minimo un simbolo", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("La contraseña tiene que tener como minimo un simbolo", "Error", JOptionPane.ERROR_MESSAGE);
             PassContrasena.requestFocus();
             return;
         }
         
         if (!contrasena.equals(confirmarcontra)) {
-            JOptionPane.showMessageDialog(this, "Las contraseñas deben ser iguales", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("Las contraseñas deben ser iguales", "Error", JOptionPane.ERROR_MESSAGE);
             PassConfirmarContra.requestFocus();
             return;
         }
         
         if (Memoria.isFull()) {
-            JOptionPane.showMessageDialog(this, "Capacidad de cuentas llena", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("Capacidad de cuentas llena", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (Memoria.ExisteUsuario(usuario)) {
-            JOptionPane.showMessageDialog(this, "El usuario ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("El usuario ya existe", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         if (Memoria.Agregar(usuario, contrasena)) {
-            JOptionPane.showMessageDialog(this, "Cuenta creada exitosamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
+            MostrarMensaje("Cuenta creada exitosamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
             menuInicial.onLoginExitoso(usuario);
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Hubo un error creando la cuenta", "Error", JOptionPane.ERROR_MESSAGE);
+            MostrarMensaje("Hubo un error creando la cuenta", "Error", JOptionPane.ERROR_MESSAGE);
             LimpiarCampos();
         }
     }
@@ -430,5 +430,67 @@ public class CrearCuenta extends JDialog {
         label.setBackground(new Color(0, 0, 0, 180));
         label.setOpaque(true);
         label.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6), BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(60, 30, 0))));
+    }
+    
+    private void MostrarMensaje(String mensaje, String titulo, int tipo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        JOptionPane.showMessageDialog(this, panel, titulo, tipo);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+    }
+    
+    private int MostrarConfirmacion(String mensaje, String titulo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        int resultado = JOptionPane.showConfirmDialog(this, panel, titulo, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+        
+        return resultado;
     }
 }
