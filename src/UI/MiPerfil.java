@@ -27,7 +27,6 @@ public class MiPerfil extends JFrame {
     private JLabel LblUsuario;
     private JLabel LblPuntos;
     private JLabel LblFechaIngreso;
-    private JLabel LblActivo;
     
     private String UsuarioActivo;
     private final MenuPrincipal menuPrincipal;
@@ -108,9 +107,6 @@ public class MiPerfil extends JFrame {
         
         LblFechaIngreso = new JLabel("");
         EstilizarLabel(LblFechaIngreso);
-        
-        LblActivo = new JLabel("");
-        EstilizarLabel(LblActivo);
 
         PanelInfo.add(Box.createVerticalStrut(10));
         PanelInfo.add(LblUsuario);
@@ -119,7 +115,6 @@ public class MiPerfil extends JFrame {
         PanelInfo.add(Box.createVerticalStrut(10));
         PanelInfo.add(LblFechaIngreso);
         PanelInfo.add(Box.createVerticalStrut(10));
-        PanelInfo.add(LblActivo);
         
         PanelInfoWrapper.add(PanelInfo);
                  
@@ -150,7 +145,6 @@ public class MiPerfil extends JFrame {
         LblUsuario.setText("Nombre de Usuario: " + UsuarioActivo);
         LblPuntos.setText("Puntaje: " + jugador.getPuntos());
         LblFechaIngreso.setText("Fecha de Ingreso: " + Memoria.getFechaIngresoFormat(indice, "dd/MM/yyyy HH:mm"));
-        LblActivo.setText("Estado: " + (jugador.isActivo() ? "ACTIVO" : "INACTIVO"));
     }
     
     private void ModificarMisDatos() {
@@ -175,12 +169,10 @@ public class MiPerfil extends JFrame {
         
         int puntos = Memoria.getPuntos(indice);
         String fecha = Memoria.getFechaIngresoFormat(indice, "dd/MM/yyyy HH:mm");
-        boolean activo = Memoria.isActivo(indice);
         
         LblUsuario.setText("Usuario: " + usuario);
         LblPuntos.setText("Puntos: " + puntos);
         LblFechaIngreso.setText("Fecha de ingreso: " + fecha);
-        LblActivo.setText("Estado: " + (activo ? "ACTIVO" : "INACTIVO"));
         
         repaint();
         revalidate();
