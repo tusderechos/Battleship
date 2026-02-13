@@ -21,6 +21,7 @@ public class ModificarDatos extends JDialog {
     
     private final MemoriaCuentas Memoria;
     private final MenuPrincipal menuPrincipal;
+    private MenuInicial menuInicial;
     private final int Indice;
     
     private final String UsuarioActivo;
@@ -135,11 +136,16 @@ public class ModificarDatos extends JDialog {
         JButton BtnVolver = new JButton("VOLVER");
         EstilizarBoton(BtnVolver);
         
+        JButton BtnBorrar = new JButton("BORRAR CUENTA");
+        EstilizarBoton(BtnBorrar);
+        
         BtnGuardar.addActionListener(e -> onGuardar());
         BtnVolver.addActionListener(e -> dispose());
+        BtnBorrar.addActionListener(e -> onBorrarCuenta());
         
         PanelBotones.add(BtnGuardar);
         PanelBotones.add(BtnVolver);
+        PanelBotones.add(BtnBorrar);
         
         getRootPane().setDefaultButton(BtnGuardar);
     }
@@ -218,6 +224,34 @@ public class ModificarDatos extends JDialog {
         
         MostrarMensaje("Datos actualizados correctamente", "Exito", JOptionPane.INFORMATION_MESSAGE);
         dispose();
+    }
+    
+    private void onBorrarCuenta() {
+        int confirmacion = MostrarConfirmacion("Estas seguro que deseas ELIMINAR tu cuenta?\n\n" + "Esta accion es permanente y no se puede deshacer\n" + "Perderas todos tus datos y estadisticas", "ADVERTENCIA");
+        
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        if (Memoria.Eliminar(UsuarioActivo)) {
+            MostrarMensaje("Tu cuenta ha sido eliminada exitosamente\n\n" + "Seras redirigido al menu de inicio", "Cuenta Eliminada", JOptionPane.INFORMATION_MESSAGE);
+                        
+            dispose();
+                        
+            SwingUtilities.invokeLater(() -> {
+                for(Window ventana : Window.getWindows()) {
+                    if (ventana.isDisplayable() && !(ventana instanceof MenuInicial)) {
+                        ventana.setVisible(false);
+                        ventana.dispose();
+                    }
+                }
+                
+                new MenuInicial(Memoria).setVisible(true);
+            });
+                        
+        } else {
+            MostrarMensaje("Hubo un error al intentar eliminar tu cuenta\n" + "Por favor, intentalo de nuevo", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void setMensaje(String mensaje) {
@@ -310,5 +344,37 @@ public class ModificarDatos extends JDialog {
         UIManager.put("Button.background", null);
         UIManager.put("Button.foreground", null);
         UIManager.put("Button.border", null);
+    }
+    
+    private int MostrarConfirmacion(String mensaje, String titulo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        int resultado = JOptionPane.showConfirmDialog(this, panel, titulo, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
+        
+        return resultado;
     }
 }
