@@ -46,11 +46,11 @@ public class MemoriaCuentas implements Datos {
     }
     
     private int BuscarUsuariosRec(String usuario, int indice) {
-        if (indice >= Registrados) {
+        if (usuario == null || indice >= Registrados) {
             return -1;
         }
         
-        if (Jugadores[indice].equals(usuario)) {
+        if (usuario.equalsIgnoreCase(Jugadores[indice].getUsername())) {
             return indice;
         }
         
