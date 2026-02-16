@@ -444,7 +444,7 @@ public class PanelJuego extends JFrame {
         CBBarco.setEnabled(FaseColocacion);
         BtnRotar.setEnabled(FaseColocacion);
         BtnConfirmarColocacion.setEnabled(FaseColocacion);
-        BtnRetirar.setEnabled(!FaseColocacion);
+        BtnRetirar.setEnabled(!FaseColocacion); //Para daniel del futuro, comenta esta linea pa que siempre funcione el boton de retirar por si las moscas
     }
     
     private void HabilitarClickDisparo() {
@@ -564,6 +564,7 @@ public class PanelJuego extends JFrame {
     }
     
     private void onRetirar() {
+        //Para daniel del futuro, tambien comenta aqui para que funcione el boton de retirar en cualquier momento
         if (FaseColocacion) {
             MostrarMensaje("Solo te puedes retirar durante la partida", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;

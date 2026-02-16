@@ -42,16 +42,19 @@ public class MemoriaCuentas implements Datos {
     
     @Override
     public int getIndiceUsuario(String usuario) {
-        if (usuario == null || usuario.isEmpty()) 
+        return BuscarUsuariosRec(usuario, 0);
+    }
+    
+    private int BuscarUsuariosRec(String usuario, int indice) {
+        if (indice >= Registrados) {
             return -1;
-        
-        for (int i = 0; i < Registrados; i++) {
-            if (Jugadores[i] != null && Jugadores[i].isActivo() && usuario.equalsIgnoreCase(Jugadores[i].getUsername())) {
-                return i;
-            }
         }
         
-        return -1;
+        if (Jugadores[indice].equals(usuario)) {
+            return indice;
+        }
+        
+        return BuscarUsuariosRec(usuario, indice + 1);
     }
     
     public int getIndiceUsuarioExacto(String usuario) {

@@ -5,6 +5,13 @@
         <group>
             <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/UI/ModificarDatos.java</file>
             <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/UI/MenuPrincipal.java</file>
+            <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/UI/Reportes.java</file>
+            <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/ManejoCuentas/MemoriaCuentas.java</file>
+            <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/ManejoCuentas/Player.java</file>
+            <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/UI/PanelJuego.java</file>
+            <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/LogicaJuego/Battleship.java</file>
+            <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/enums/Dificultad.java</file>
+            <file>file:/C:/Users/USUARIO/Documents/NetBeansProjects/Battleship/src/UI/MiPerfil.java</file>
         </group>
     </open-files>
 </project-private>
