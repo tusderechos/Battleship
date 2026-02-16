@@ -18,8 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class MenuPrincipal extends JFrame {
     
@@ -192,16 +190,6 @@ public class MenuPrincipal extends JFrame {
         }
 
         PanelJuego juego = new PanelJuego(Memoria, UsuarioActivo, this, getDificultadActual(), getModoJuegoActual());
-//        this.setVisible(false);
-//        
-//        juego.addWindowListener(new WindowAdapter() {
-//            @Override
-//            public void windowClosing(WindowEvent e) {
-//                MenuPrincipal.this.setVisible(true);
-//            }
-//        });
-//        
-//        juego.setVisible(true);
 
         if (juego.isInicializacionExitosa()) {
             juego.setVisible(true);

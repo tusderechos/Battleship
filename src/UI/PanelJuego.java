@@ -15,7 +15,6 @@ import LogicaJuego.Battleship;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -77,21 +76,11 @@ public class PanelJuego extends JFrame {
         String jugador2 = PedirJugador2();
         
         if (jugador2 == null) {
-//            dispose();
-//            
-//            if (menuPrincipal != null)
-//                menuPrincipal.setVisible(true);
-//            
             return;
         }
                 
         if (!Juego.IniciarPartida(this.UsuarioActivo, jugador2)) {
             MostrarMensaje("No se pudo iniciar la partida", "Error", JOptionPane.ERROR_MESSAGE);
-//            dispose();
-//            
-//            if (menuPrincipal != null)
-//                menuPrincipal.setVisible(true);
-//            
             return;
         }
         

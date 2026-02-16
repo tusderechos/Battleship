@@ -47,7 +47,7 @@ public class ModificarDatos extends JDialog {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         
         if (this.UsuarioActivo.isEmpty() || Indice < 0) {
-            JOptionPane.showMessageDialog(padre, "No hay sesion activa", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("No hay sesion activa", "Aviso", JOptionPane.WARNING_MESSAGE);
             dispose();
             return;
         }
@@ -136,7 +136,7 @@ public class ModificarDatos extends JDialog {
         JButton BtnVolver = new JButton("VOLVER");
         EstilizarBoton(BtnVolver);
         
-        JButton BtnBorrar = new JButton("BORRAR CUENTA");
+        JButton BtnBorrar = new JButton("BORRAR");
         EstilizarBoton(BtnBorrar);
         
         BtnGuardar.addActionListener(e -> onGuardar());
@@ -266,7 +266,7 @@ public class ModificarDatos extends JDialog {
         boton.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 2), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
         boton.setOpaque(true);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(220, 44));
+        boton.setPreferredSize(new Dimension(190, 44));
         
         boton.addMouseListener(new MouseAdapter() {
             @Override

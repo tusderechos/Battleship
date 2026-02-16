@@ -9,7 +9,6 @@ package ManejoCuentas;
  * @author Hp
  */
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Player {

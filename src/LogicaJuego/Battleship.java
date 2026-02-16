@@ -291,8 +291,8 @@ public class Battleship {
         String perdedor = (Turno == 1) ? Jugador2 : Jugador1;
         String fecha = Fecha();
         
-        Memoria.AgregarLog(ganador, fecha, perdedor, "GANO");
-        Memoria.AgregarLog(perdedor, fecha, ganador, "PERDIO");
+        Memoria.AgregarLog(ganador, fecha, perdedor, ganador + " ha hundido todos los barcos de " + perdedor + " en modo " + dificultad.toString());
+        Memoria.AgregarLog(perdedor, fecha, ganador, "Todos los barcos de " + perdedor + " han sido hundidos por " + ganador + " en modo " + dificultad.toString());
         Memoria.SumarPuntos(ganador, 3);
     }
     
@@ -301,8 +301,8 @@ public class Battleship {
         String ganador = (Turno == 1) ? Jugador2 : Jugador1;
         String fecha = Fecha();
         
-        Memoria.AgregarLog(ganador, fecha, perdedor, "GANO (RETIRO)");
-        Memoria.AgregarLog(perdedor, fecha, ganador, "SE HA RETIRADO");
+        Memoria.AgregarLog(ganador, fecha, perdedor, ganador + " ha ganado porque " + perdedor + " se ha retirado");
+        Memoria.AgregarLog(perdedor, fecha, ganador, perdedor + " se ha retirado en una partida contra " + ganador);
         Memoria.SumarPuntos(ganador, 3);
     }
     

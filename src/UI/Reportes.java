@@ -54,7 +54,7 @@ public class Reportes extends JFrame {
             }
         };
         
-        setTitle("Vampire Wargame - Reportes");
+        setTitle("BATTLESHIP - Reportes");
         this.setContentPane(PanelFondo);
         setSize(800, 700);
         setResizable(false);
@@ -219,8 +219,8 @@ public class Reportes extends JFrame {
         PanelTablas.add(CajaRanking);
         PanelTablas.add(CajaLogs);
         
-        AjustarAnchosProporcional(TblLogs, 20, 30, 50);
-        HookResizeProporcional(ScrollLogs, () -> AjustarAnchosProporcional(TblLogs, 20, 30, 50));
+        AjustarAnchosProporcional(TblLogs, 20, 20, 60);
+        HookResizeProporcional(ScrollLogs, () -> AjustarAnchosProporcional(TblLogs, 20, 20, 60));
         
         
         JPanel PanelBotones = new JPanel();
@@ -273,7 +273,7 @@ public class Reportes extends JFrame {
         }
         
         if (vartemp == 0) {
-            JOptionPane.showMessageDialog(this, "No hay jugadores activos", "Ranking Vacio", JOptionPane.INFORMATION_MESSAGE);
+            MostrarMensaje("No hay jugadores activos", "Ranking Vacio", JOptionPane.INFORMATION_MESSAGE);
             AjustarAnchosProporcional(TblRanking, 15, 55, 30);
             return;
         }
@@ -325,7 +325,7 @@ public class Reportes extends JFrame {
         String[] logs = Memoria.ObtenerLogsUsuario(UsuarioActivo);
         
         if (logs == null || logs.length == 0) {
-            JOptionPane.showMessageDialog(this, "No hay partidas registradas para este jugador", "Registro vacio", JOptionPane.INFORMATION_MESSAGE);
+            MostrarMensaje("No hay partidas registradas para este jugador", "Registro vacio", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
@@ -343,7 +343,7 @@ public class Reportes extends JFrame {
             }
         }
         
-        AjustarAnchosProporcional(TblLogs, 20, 30, 50);
+        AjustarAnchosProporcional(TblLogs, 20, 20, 60);
     }
     
     private void onSalir() {        
@@ -406,7 +406,7 @@ public class Reportes extends JFrame {
     }
     
     private void EstilizarBoton(JButton boton) {
-        boton.setFont(new Font("Bookman Old Style", Font.BOLD, 18));
+        boton.setFont(new Font("DIN Condensed", Font.BOLD, 18));
         boton.setBackground(new Color(25, 25, 25)); //Gris oscuro tipo metal
         boton.setForeground(new Color(220, 180, 120)); //Dorado suave
         boton.setFocusPainted(false);
@@ -431,17 +431,34 @@ public class Reportes extends JFrame {
         });
     }
     
-    private void EstilizarTitulo(JLabel titulo) {
-        titulo.setHorizontalAlignment(SwingConstants.CENTER);
+    private void MostrarMensaje(String mensaje, String titulo, int tipo) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(20, 20, 35));
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 3), BorderFactory.createEmptyBorder(20, 20, 20, 20)));
         
-        Font base = new Font("Old English Text MT", Font.BOLD, 38);
-        titulo.setFont(base);
+        JLabel lblmensaje = new JLabel("<html><div style='text-align: center; width: 250px;'>" + mensaje.replace("\n", "<br>") + "</div></html>");
+        lblmensaje.setForeground(Color.WHITE);
+        lblmensaje.setFont(new Font("DIN Condensed", Font.BOLD, 16));
+        lblmensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        titulo.setForeground(new Color(230, 200, 120));
-        titulo.setOpaque(true);
-        titulo.setBackground(new Color(0, 0, 0, 170)); //Franja oscura
-        titulo.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(lblmensaje);
+        
+        UIManager.put("OptionPane.background", new Color(20, 20, 35));
+        UIManager.put("Panel.background", new Color(20, 20, 35));
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+        UIManager.put("Button.background", new Color(25, 25, 25));
+        UIManager.put("Button.foreground", new Color(220, 180, 120));
+        UIManager.put("Button.border", BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(120, 0, 0), 1), BorderFactory.createEmptyBorder(5, 15, 5, 15)));
+        
+        JOptionPane.showMessageDialog(this, panel, titulo, tipo);
+        
+        UIManager.put("OptionPane.background", null);
+        UIManager.put("Panel.background", null);
+        UIManager.put("OptionPane.messageForeground", null);
+        UIManager.put("Button.background", null);
+        UIManager.put("Button.foreground", null);
+        UIManager.put("Button.border", null);
     }
 }
 

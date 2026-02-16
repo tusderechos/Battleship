@@ -38,7 +38,7 @@ public class MiPerfil extends JFrame {
         this.menuPrincipal = menuPrincipal;
         
         if (this.UsuarioActivo.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            MostrarMensaje("Primero inicia sesion o crea una cuenta!", "Aviso", JOptionPane.WARNING_MESSAGE);
             dispose();
             return;
         }
